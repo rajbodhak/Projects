@@ -1,7 +1,4 @@
-import DataUriParser from "datauri/parser";
 import path from "path";
-
-const parser = new DataUriParser();
 
 const getDataUri = (file: { originalname: string; buffer: Buffer }): string | null => {
     if (!file || !file.originalname || !file.buffer) {
@@ -9,15 +6,39 @@ const getDataUri = (file: { originalname: string; buffer: Buffer }): string | nu
         return null; // Handle missing file safely
     }
 
-    const extName = path.extname(file.originalname);
-    const dataUri = parser.format(extName, file.buffer)?.content;
+    try {
+        // Get the MIME type based on file extension
+        const mimeType = getMimeType(path.extname(file.originalname));
 
-    if (!dataUri) {
-        console.error("Failed to generate Data URI");
+        // Convert buffer to base64
+        const base64 = file.buffer.toString('base64');
+
+        // Create data URI
+        return `data:${mimeType};base64,${base64}`;
+    } catch (error) {
+        console.error("Failed to generate Data URI:", error);
         return null;
     }
-
-    return dataUri;
 };
+
+// Helper function to get MIME type from file extension
+function getMimeType(extension: string): string {
+    const mimeTypes: Record<string, string> = {
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.gif': 'image/gif',
+        '.webp': 'image/webp',
+        '.svg': 'image/svg+xml',
+        '.pdf': 'application/pdf',
+        '.txt': 'text/plain',
+        '.html': 'text/html',
+        '.css': 'text/css',
+        '.js': 'application/javascript',
+        // Add more MIME types as needed
+    };
+
+    return mimeTypes[extension.toLowerCase()] || 'application/octet-stream';
+}
 
 export default getDataUri;
