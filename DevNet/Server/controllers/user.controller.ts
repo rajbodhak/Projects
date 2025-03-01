@@ -136,7 +136,7 @@ export const logout = async (req: Request, res: Response): Promise<Response> => 
 export const getuser = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = req.params.id;
-        let user = await User.findById(userId);
+        let user = await User.findById(userId).select("-password");
         if (!user) {
             return res.status(401).json({
                 error: "user not found",
@@ -258,6 +258,11 @@ export const followOrUnfollow = async (req: AuthenticatedRequest, res: Response)
             User.findById(userObjectId),
             User.findById(followObjectId)
         ]);
+
+        console.log("Current user ID:", userId);
+        console.log("Follow ID:", followId);
+        console.log("Current user ObjectId:", userObjectId);
+        console.log("Follow ObjectId:", followObjectId);
 
         if (!userToFollow || !currentUser) {
             return res.status(404).json({ error: "User not found", success: false });
