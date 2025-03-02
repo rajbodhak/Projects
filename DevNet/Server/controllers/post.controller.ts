@@ -43,7 +43,7 @@ export const addNewPost = async (req: AuthenticatedRequest, res: Response) => {
         // Create Post (with or without image)
         const post = await Post.create({
             content,
-            image: imageUrl || null, // Store null if no image is provided
+            image: imageUrl || null,
             user: userId
         });
 
