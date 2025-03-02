@@ -40,14 +40,12 @@ export const addNewPost = async (req: AuthenticatedRequest, res: Response) => {
             imageUrl = cloudResponse.secure_url;
         }
 
-        // Create Post (with or without image)
         const post = await Post.create({
             content,
             image: imageUrl || null,
             user: userId
         });
 
-        // Add Post to User's Posts
         const user = await User.findById(userId);
         if (user) {
             user.posts.push(post._id as mongoose.Types.ObjectId);
