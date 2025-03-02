@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "../config/db.ts";
 import userRoutes from "../routers/user.router.ts";
+import postRoutes from "../routers/post.router.ts";
 
 // Load environment variables first
 dotenv.config();
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 
 //User Routes
 app.use("/api/users", userRoutes);
+app.use("/api/posts/", postRoutes);
 
 const PORT = parseInt(process.env.PORT || "8000", 10);
 
