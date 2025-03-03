@@ -2,11 +2,12 @@ import User from "../models/user.model.ts";
 import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import multer from "multer";
+import { Multer } from "multer";
 import cloudinary from "../utils/cloudinary.ts";
 import getDataUri from "../utils/datauri.ts";
 import { UploadApiResponse } from "cloudinary"
 import mongoose from "mongoose";
+import Post from "../models/post.model.ts"
 
 export const register = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -56,20 +57,28 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
         }
 
         const user = await User.findOne({ email });
+
         if (!user) {
             return res.status(401).json({
-                error: "Wrong email or password",
+                error: "Invalid credentials",
                 success: false
             });
         }
 
+        // Verify password
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (!isPasswordCorrect) {
             return res.status(401).json({
-                error: "Wrong password",
+                error: "Invalid credentials",
                 success: false
             });
         }
+
+        // Now populate posts in a separate step
+        await user.populate({
+            path: 'posts',
+            match: { user: user._id as mongoose.Types.ObjectId }
+        });
 
         // Extract only necessary user data
         const userData = {
@@ -81,23 +90,27 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
             github: user.github,
             skills: user.skills,
             bookmarks: user.bookmarks,
+            posts: user.posts
         };
 
         // Generate token
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET as string, { expiresIn: '1d' });
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET as string,
+            { expiresIn: '1d' }
+        );
 
         const cookieOptions: {
             httpOnly: boolean;
-            sameSite: "strict";  // Fix: Explicitly setting it to "strict"
+            sameSite: "strict";
             maxAge: number;
             secure: boolean;
         } = {
             httpOnly: true,
             sameSite: "strict",
             maxAge: 24 * 60 * 60 * 1000,
-            secure: process.env.NODE_ENV === 'production' // Secure only in production
+            secure: process.env.NODE_ENV === 'production'
         };
-
 
         return res
             .cookie("token", token, cookieOptions)
@@ -110,7 +123,7 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     } catch (error) {
         console.error("User login Error:", error);
         return res.status(500).json({
-            error: "Login error",
+            error: "Authentication failed",
             success: false
         });
     }
