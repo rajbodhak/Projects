@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Button } from './ui/button';
-// import axios from 'axios';
+import axios from 'axios';
 
 const SignUp = () => {
     const [input, setInput] = useState({
@@ -60,18 +59,26 @@ const SignUp = () => {
         return valid;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (validateForm()) {
-            // const response = axios.post("http")
-            console.log("Form submitted:", input);
+            await axios.post("http://localhost:8000/api/users/register", {
+                username: input.username,
+                email: input.email,
+                password: input.password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            console.log("Form submitted:", input.username, input.email);
 
             setInput({ username: "", email: "", password: "" });
         }
     };
 
     return (
-        <div className="w-full min-h-screen p-4 flex justify-center items-center bg-gray-50">
+        <div className="w-full min-h-screen p-4 flex justify-center items-center">
             <div className="w-full max-w-md rounded-lg shadow-lg bg-white overflow-hidden">
                 <div className="bg-amber-200 p-4">
                     <h1 className="text-2xl text-center font-bold">Sign Up</h1>
@@ -123,9 +130,9 @@ const SignUp = () => {
                         )}
                     </div>
 
-                    <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600">
+                    <button type="submit" className="btn-primary">
                         Create Account
-                    </Button>
+                    </button>
                 </form>
             </div>
         </div>
