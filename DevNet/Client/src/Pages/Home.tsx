@@ -1,12 +1,11 @@
-// import React from 'react'
-
-import LeftSideBar from "@/components/LeftSideBar"
+import Feed from "../components/Feed"
 
 const Home = () => {
     return (
         <div>
-            <LeftSideBar />
             This is Home
+            <Feed />
+
         </div>
     )
 }

@@ -1,5 +1,6 @@
 import { Home, Search, Bell, Mail, Bookmark, User } from "lucide-react"
-import { useState } from 'react'
+import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const sideBarItems = [
     { icon: <Home />, itemName: 'Home', active: true },
@@ -11,8 +12,13 @@ const sideBarItems = [
 ]
 
 const LeftSideBar = () => {
-    const [activeItem, setActiveItem] = useState('Home')
-
+    const [activeItem, setActiveItem] = useState('Home');
+    const navigate = useNavigate();
+    const sidebarItemHandler = (item: any) => {
+        setActiveItem(item.itemName);
+        const path = '/' + (item.itemName).toLowerCase();
+        navigate(path);
+    }
     return (
         <div className="fixed top-0 left-0 z-10 w-64 h-screen bg-white border-r border-gray-200 shadow-md">
             <div className="p-6 border-b border-gray-200">
@@ -34,7 +40,7 @@ const LeftSideBar = () => {
                                 ? 'bg-blue-50 text-blue-600'
                                 : 'hover:bg-gray-100 text-gray-600'}
                         `}
-                        onClick={() => setActiveItem(item.itemName)}
+                        onClick={() => sidebarItemHandler(item)}
                     >
                         <div className={`
                             mr-4 

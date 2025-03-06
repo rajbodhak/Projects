@@ -3,7 +3,12 @@ import Login from './components/Login'
 import SignUp from './components/SignUp'
 import Home from './Pages/Home'
 import MainLayout from './components/MainLayout'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import Notifications from './Pages/Notifications'
+import Messages from './Pages/Messages'
+import Search from './Pages/Search'
+import Bookmarks from './Pages/Bookmarks'
+import Profile from './Pages/Profile'
 
 const browserRouter = createBrowserRouter([
   {
@@ -11,8 +16,32 @@ const browserRouter = createBrowserRouter([
     element: <MainLayout />,
     children: [
       {
-        path: '/',
+        index: true,
+        element: <Navigate to='/home' replace />
+      },
+      {
+        path: '/home',
         element: <Home />,
+      },
+      {
+        path: '/search',
+        element: <Search />
+      },
+      {
+        path: '/notifications',
+        element: <Notifications />
+      },
+      {
+        path: '/messages',
+        element: <Messages />
+      },
+      {
+        path: '/bookmarks',
+        element: <Bookmarks />
+      },
+      {
+        path: '/profile',
+        element: <Profile />
       }
     ]
   },
