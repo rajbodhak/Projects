@@ -1,4 +1,4 @@
-import { Heart, MessageCircle } from "lucide-react";
+import { Heart, MessageCircle, Bookmark } from "lucide-react";
 
 // interface PostCardProps {
 
@@ -20,11 +20,12 @@ const PostCard = () => {
             <div className="text-gray-500 dark:text-gray-400 flex mt-3">
                 <div className="flex items-center mr-6">
                     <Heart />
-                    <span className="ml-3">615</span>
                 </div>
                 <div className="flex items-center mr-6">
                     <MessageCircle />
-                    <span className="ml-3">93 people are Tweeting about this</span>
+                </div>
+                <div className="flex items-center ml-auto">
+                    <Bookmark />
                 </div>
             </div>
         </div>
