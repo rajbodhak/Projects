@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Send, X } from "lucide-react";
 import axios from "axios";
+import { Comment } from "@/lib/types";
 
 // Assuming AuthContext is defined elsewhere in your app
 interface AuthContextType {
@@ -12,15 +13,6 @@ interface AuthContextType {
 
 const AuthContext = React.createContext<AuthContextType | null>(null);
 
-interface Comment {
-    _id: string;
-    text: string;
-    user: {
-        username: string;
-        profilePicture: string;
-    };
-    createdAt: string;
-}
 
 interface CommentModalProps {
     isOpen: boolean;
