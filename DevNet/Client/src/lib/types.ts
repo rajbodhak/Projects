@@ -15,6 +15,7 @@ export interface Post {
     image?: string;
     createdAt: string;
     user: {
+        _id: string;
         username: string;
         profilePicture?: string;
     };
