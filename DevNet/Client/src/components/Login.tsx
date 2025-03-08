@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { useAuth } from "../context/AuthContext"
 
 const Login = () => {
     const [input, setInput] = useState({
@@ -17,6 +18,7 @@ const Login = () => {
     const [loginError, setLoginError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    const { setUser } = useAuth();
 
     const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -73,6 +75,8 @@ const Login = () => {
                     }, withCredentials: true
                 });
                 if (response.data.success) {
+                    setUser(response.data.user);
+                    console.log("User after setUser:", localStorage.getItem('user'));
                     navigate("/");
                     toast.success(response.data.message)
                 }

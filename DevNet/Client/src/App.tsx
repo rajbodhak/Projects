@@ -9,6 +9,7 @@ import Messages from './Pages/Messages'
 import Search from './Pages/Search'
 import Bookmarks from './Pages/Bookmarks'
 import Profile from './Pages/Profile'
+import { AuthProvider } from './context/AuthContext'
 
 const browserRouter = createBrowserRouter([
   {
@@ -59,7 +60,9 @@ function App() {
 
   return (
     <>
-      <RouterProvider router={browserRouter} />
+      <AuthProvider>
+        <RouterProvider router={browserRouter} />
+      </AuthProvider>
     </>
   )
 }

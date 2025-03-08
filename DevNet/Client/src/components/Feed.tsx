@@ -2,8 +2,7 @@ import Posts from "./Posts"
 
 const Feed = () => {
     return (
-        <div>
-            This is Feed Page
+        <div className="">
             <Posts />
         </div>
     )

@@ -18,8 +18,18 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
     const [postData, setPostData] = useState<Post | null>(null);
     const { user } = useAuth();
 
+
+    useEffect(() => {
+        if (post) {
+            setPostData(post);
+            console.log("Setting postData from props:", post);
+        }
+    }, [post]);
+
+    console.log("user: ", user)
     useEffect(() => {
         if (user && post) {
+            console.log("User: ", user)
             setLiked(post.likes.includes(user._id));
             setBookmarked(user?.bookmarks?.includes(post._id) || false);
         }
@@ -62,7 +72,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
     };
 
     const handleDelete = async () => {
-        if (post._id) {
+        if (!post._id) {
             console.log("Post ID is missing");
             return;
         }
@@ -141,7 +151,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
                     </div>
                 </div>
 
-                <p className="text-black dark:text-white block text-xl leading-snug mt-3">{postData?.content}</p>
+                <p className="text-black dark:text-white block text-xl leading-snug mt-3 text-left">{postData?.content}</p>
 
                 {postData?.image && (
                     <img src={postData.image} alt="post" className="mt-2 rounded-xl border border-gray-100 dark:border-gray-700" />

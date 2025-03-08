@@ -1,17 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Send, X } from "lucide-react";
 import axios from "axios";
 import { Comment } from "@/lib/types";
-
-// Assuming AuthContext is defined elsewhere in your app
-interface AuthContextType {
-    user: {
-        username: string;
-        profilePicture: string;
-    } | null;
-}
-
-const AuthContext = React.createContext<AuthContextType | null>(null);
+import { useAuth } from "@/context/AuthContext";
 
 
 interface CommentModalProps {
@@ -25,8 +16,7 @@ interface CommentModalProps {
 export const CommentModal: React.FC<CommentModalProps> = ({ isOpen, onClose, postId, comments, onCommentAdded }) => {
     const [commentText, setCommentText] = useState("");
     const [loading, setLoading] = useState(false);
-    const authContext = useContext(AuthContext);
-    const user = authContext?.user;
+    const { user } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -84,7 +74,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({ isOpen, onClose, pos
                                                 {new Date(comment.createdAt).toLocaleString()}
                                             </span>
                                         </div>
-                                        <p className="text-black dark:text-white text-sm mt-1">{comment.text}</p>
+                                        <p className="text-black text-left dark:text-white text-sm mt-1">{comment.text}</p>
                                     </div>
                                 </div>
                             </div>
