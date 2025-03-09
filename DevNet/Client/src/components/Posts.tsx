@@ -51,7 +51,7 @@ const Posts = () => {
     if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 ml-60">
             {posts.length > 0 ? (
                 posts.map(post => {
                     console.log("Rendering post:", post._id);

@@ -1,8 +1,9 @@
 import Posts from "./Posts"
+import RightSideBar from "./RightSideBar"
 
 const Feed = () => {
     return (
-        <div className="">
+        <div>
             <Posts />
         </div>
     )
