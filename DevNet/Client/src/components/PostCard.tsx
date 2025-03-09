@@ -180,7 +180,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
             <CommentModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                postId={postData?._id ?? ""}
+                postId={postData?._id ?? " "}
                 onCommentAdded={handleCommentAdded}
                 comments={postData?.comments ?? []}
             />
