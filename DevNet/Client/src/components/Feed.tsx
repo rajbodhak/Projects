@@ -1,5 +1,4 @@
-import Posts from "./Posts"
-import RightSideBar from "./RightSideBar"
+import Posts from "./Posts";
 
 const Feed = () => {
     return (

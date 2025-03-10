@@ -8,21 +8,20 @@ const Posts = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    // First, check the exact structure of your response
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://localhost:8000/api/posts/', { withCredentials: true });
 
                 // Log the specific array you're trying to set
-                console.log("Posts array to set:", response.data.posts);
+                // console.log("Posts array to set:", response.data.posts);
 
                 // Check if there are actually posts
                 if (response.data.success && Array.isArray(response.data.posts) && response.data.posts.length > 0) {
                     setPosts(response.data.posts);
                 } else {
                     console.warn("API returned success but no posts or empty array");
-                    setPosts([]); // Explicitly set empty array
+                    setPosts([]);
                 }
             } catch (error) {
                 console.error("Fetch posts error", error);
@@ -33,9 +32,9 @@ const Posts = () => {
         };
         fetchData();
     }, []);
-    useEffect(() => {
-        console.log("Updated Posts State:", posts);
-    }, [posts]);
+    // useEffect(() => {
+    //     console.log("Updated Posts State:", posts);
+    // }, [posts]);
 
     const handlePostUpdate = (postId: string, updatedPost: Post) => {
         setPosts(prev =>
@@ -51,7 +50,7 @@ const Posts = () => {
     if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
 
     return (
-        <div className="space-y-4 ml-60">
+        <div className="space-y-4 ">
             {posts.length > 0 ? (
                 posts.map(post => {
                     console.log("Rendering post:", post._id);

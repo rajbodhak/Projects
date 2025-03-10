@@ -3,7 +3,7 @@ import Feed from "../components/Feed"
 
 const Home = () => {
     return (
-        <div className="items-center">
+        <div className="flex flex-col items-center">
             This is Home
             <Feed />
             <RightSideBar />

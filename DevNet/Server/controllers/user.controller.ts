@@ -11,7 +11,7 @@ import Post from "../models/post.model.ts"
 
 export const register = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, name } = req.body;
         if (!username || !email || !password) {
             return res.status(401).json({
                 error: "All fields should be provided",
@@ -27,6 +27,7 @@ export const register = async (req: Request, res: Response): Promise<Response> =
         };
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.create({
+            name: name || " ",
             username,
             email,
             password: hashedPassword
@@ -85,6 +86,7 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
             _id: user._id,
             username: user.username,
             email: user.email,
+            name: user.name,
             profilePicture: user.profilePicture,
             bio: user.bio,
             github: user.github,
@@ -182,7 +184,7 @@ export const editUser = async (req: AuthenticatedRequest, res: Response): Promis
             return res.status(401).json({ error: "User not authenticated", success: false });
         }
 
-        const { bio, github, skills } = req.body;
+        const { bio, github, skills, name } = req.body;
         const profilePicture: Express.Multer.File | undefined = req.file;
         let cloudResponse: UploadApiResponse | undefined;
 
@@ -199,6 +201,7 @@ export const editUser = async (req: AuthenticatedRequest, res: Response): Promis
             return res.status(404).json({ error: "User not found", success: false });
         }
 
+        if (name) user.name = name;
         if (bio) user.bio = bio;
         if (github) user.github = github;
         if (skills) user.skills = skills;

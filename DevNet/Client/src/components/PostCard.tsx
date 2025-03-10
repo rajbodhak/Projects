@@ -26,10 +26,9 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
         }
     }, [post]);
 
-    console.log("user: ", user)
     useEffect(() => {
         if (user && post) {
-            console.log("User: ", user)
+            // console.log("User: ", user)
             setLiked(post.likes.includes(user._id));
             setBookmarked(user?.bookmarks?.includes(post._id) || false);
         }
