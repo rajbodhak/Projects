@@ -19,16 +19,30 @@ const ProfileEdit = ({ userinfo, onUpdate, onCancel }: ProfileDetailsProps) => {
         try {
             const response = await axios.put('http://localhost:8000/api/users/profile/edit', {
                 name, bio, skills: skills.split(",").map(skill => skill.trim()), github
-            }, { withCredentials: true })
+            }, { withCredentials: true });
+            if (response.data.success) {
+                onUpdate(response.data.user);
+            }
         } catch (error) {
-
+            console.log("Edit Profile component error: ", error);
         }
     }
     return (
-        <div>
+        <div className="max-w-lg mx-auto bg-gray-900 text-white rounded-2xl shadow-lg p-6">
+            <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input-field" placeholder="Name" />
+                <textarea value={bio} onChange={(e) => setBio(e.target.value)} className="input-field" placeholder="Bio"></textarea>
+                <input type="text" value={skills} onChange={(e) => setSkills(e.target.value)} className="input-field" placeholder="Skills (comma-separated)" />
+                <input type="text" value={github} onChange={(e) => setGithub(e.target.value)} className="input-field" placeholder="GitHub" />
 
+                <div className="flex justify-between mt-4">
+                    <button type="button" className="btn-secondary" onClick={onCancel}>Cancel</button>
+                    <button type="submit" className="btn-primary">Save Changes</button>
+                </div>
+            </form>
         </div>
-    )
+    );
 }
 
 export default ProfileEdit

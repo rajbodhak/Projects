@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { User } from "@/lib/types";
-import { useAuth } from "@/context/AuthContext";
 
 interface ProfileDetailsProps {
     userinfo: User;
+    onEdit: () => void;  // Function to switch to edit mode
 }
-const ProfileDetails = ({ userinfo }: ProfileDetailsProps) => {
+
+const ProfileDetails = ({ userinfo, onEdit }: ProfileDetailsProps) => {
     const [userDetails, setUserDetails] = useState<User | null>(null);
     const [skills, setSkills] = useState<string[]>([]);
-    const { user } = useAuth();
 
     useEffect(() => {
         setUserDetails(userinfo);
@@ -16,7 +16,7 @@ const ProfileDetails = ({ userinfo }: ProfileDetailsProps) => {
     }, [userinfo]);
 
     return (
-        <div className="max-w-lg mx-auto bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-2xl shadow-lg p-6">
+        <div className="max-w-lg mx-auto bg-gray-900 text-white rounded-2xl shadow-lg p-6">
             <div className="flex items-center justify-between">
                 <img
                     src={userDetails?.profilePicture}
@@ -28,7 +28,8 @@ const ProfileDetails = ({ userinfo }: ProfileDetailsProps) => {
                     <p className="text-gray-400">@{userDetails?.username?.toLowerCase() || 'user'}</p>
                 </div>
 
-                <button className="btn-primary !w-28">Edit Profile</button>
+                {/* Edit Button */}
+                <button className="btn-primary !w-28" onClick={onEdit}>Edit Profile</button>
             </div>
 
             <div className="mt-4">
@@ -54,6 +55,6 @@ const ProfileDetails = ({ userinfo }: ProfileDetailsProps) => {
             </div>
         </div>
     );
-}
+};
 
 export default ProfileDetails;
