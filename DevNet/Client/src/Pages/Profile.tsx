@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
+import ProfileDetails from "@/components/ProfileDetails";
 
 const Profile = () => {
     const [userData, setUserData] = useState(null);
@@ -35,12 +36,11 @@ const Profile = () => {
 
     return (
         <div>
-            {/* {userData && <h2>Welcome, {userData.name}</h2>} */}
             <h1 className="text-2xl font-bold">This is Profile Page</h1>
             {loading && <p>Loading...</p>}
             {error && <p>{error}</p>}
             {userData && (
-                <pre>{JSON.stringify(userData, null, 2)}</pre>
+                <ProfileDetails userinfo={userData} />
             )}
 
         </div>
