@@ -20,7 +20,7 @@ const LeftSideBar = () => {
         navigate(path);
     }
     return (
-        <div className="fixed top-0 left-0 z-10 w-64 h-screen bg-white border-r border-gray-200 shadow-md">
+        <div className="fixed top-0 left-0 z-10 lg:w-96 h-screen bg-white border-r border-gray-200 shadow-md">
             <div className="p-6 border-b border-gray-200">
                 <h1 className="text-2xl font-bold text-gray-800">Logo</h1>
             </div>

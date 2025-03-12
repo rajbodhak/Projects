@@ -36,9 +36,9 @@ const ProfileEdit = ({ userinfo, onUpdate, onCancel }: ProfileDetailsProps) => {
                 <input type="text" value={skills} onChange={(e) => setSkills(e.target.value)} className="input-field" placeholder="Skills (comma-separated)" />
                 <input type="text" value={github} onChange={(e) => setGithub(e.target.value)} className="input-field" placeholder="GitHub" />
 
-                <div className="flex justify-between mt-4">
-                    <button type="button" className="btn-secondary" onClick={onCancel}>Cancel</button>
-                    <button type="submit" className="btn-primary">Save Changes</button>
+                <div className="flex justify-between mt-4 gap-3">
+                    <button type="button" className="btn-secondary !w-1/2" onClick={onCancel}>Cancel</button>
+                    <button type="submit" className="btn-primary !w-1/2">Save Changes</button>
                 </div>
             </form>
         </div>
