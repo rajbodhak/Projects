@@ -53,7 +53,7 @@ const Posts = () => {
         <div className="space-y-4 ">
             {posts.length > 0 ? (
                 posts.map(post => {
-                    console.log("Rendering post:", post._id);
+                    // console.log("Rendering post:", post._id);
                     return (
                         <PostCard
                             key={post._id}

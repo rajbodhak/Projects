@@ -80,7 +80,7 @@ const Login = () => {
                     navigate("/");
                     toast.success(response.data.message)
                 }
-                console.log("User logged in successfully", response.data);
+                // console.log("User logged in successfully", response.data);
                 setInput({ email: "", password: "" });
 
                 // TODO:

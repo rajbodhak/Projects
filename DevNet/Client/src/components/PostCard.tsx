@@ -22,7 +22,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
     useEffect(() => {
         if (post) {
             setPostData(post);
-            console.log("Setting postData from props:", post);
+            // console.log("Setting postData from props:", post);
         }
     }, [post]);
 

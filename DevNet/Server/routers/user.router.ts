@@ -10,7 +10,7 @@ import {
 } from "../controllers/user.controller.ts";
 import isAuthenticated from "../middlewares/isAuthenticated.ts";
 import upload from "../utils/multer.ts";
-
+// console.log("Imported upload object:", typeof upload, upload);
 const router = express.Router();
 
 router.post("/register", register);

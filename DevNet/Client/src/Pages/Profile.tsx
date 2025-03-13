@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import ProfileDetails from "@/components/ProfileDetails";
 import ProfileEdit from "@/components/ProfileEdit";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
     const [userData, setUserData] = useState(null);
@@ -10,7 +11,7 @@ const Profile = () => {
     const [error, setError] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const { user } = useAuth();
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchData = async () => {
             if (!user) return;
@@ -26,7 +27,8 @@ const Profile = () => {
                 }
             } catch (err) {
                 console.log("User data fetching error:", err);
-                setError("Failed to load user data");
+                setError("Failed to load user data | Login session expired");
+                navigate("/login");
             } finally {
                 setLoading(false);
             }

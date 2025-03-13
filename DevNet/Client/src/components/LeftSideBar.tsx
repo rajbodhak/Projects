@@ -29,7 +29,7 @@ const LeftSideBar = () => {
                     <div
                         key={index}
                         className={`
-                            flex items-center 
+                            flex items-center
                             px-4 py-3 
                             rounded-lg 
                             cursor-pointer 
@@ -50,7 +50,7 @@ const LeftSideBar = () => {
                         `}>
                             {item.icon}
                         </div>
-                        <span className="font-medium">{item.itemName}</span>
+                        <span className="font-medium hidden md:inline">{item.itemName}</span>
                     </div>
                 ))}
             </nav>

@@ -7,7 +7,6 @@ import cloudinary from "../utils/cloudinary.ts";
 import getDataUri from "../utils/datauri.ts";
 import { UploadApiResponse } from "cloudinary"
 import mongoose from "mongoose";
-import Post from "../models/post.model.ts"
 
 export const register = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -189,10 +188,13 @@ export const editUser = async (req: AuthenticatedRequest, res: Response): Promis
         let cloudResponse: UploadApiResponse | undefined;
 
         if (profilePicture) {
+            console.log("About to process profile picture:", profilePicture);
             const fileUri = getDataUri(profilePicture);
             if (!fileUri) {
                 return res.status(400).json({ error: "Invalid file upload", success: false });
             }
+            // console.log("Cloudinary object:", cloudinary);
+            // console.log("Cloudinary uploader:", cloudinary.uploader);
             cloudResponse = await cloudinary.uploader.upload(fileUri);
         }
 
