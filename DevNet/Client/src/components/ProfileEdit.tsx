@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { User } from "@/lib/types";
 import axios from 'axios';
-import { CloudUpload } from 'lucide-react';
+import { Focus } from 'lucide-react';
 
 interface ProfileDetailsProps {
     userinfo: User;
@@ -83,7 +83,7 @@ const ProfileEdit = ({ userinfo, onUpdate, onCancel }: ProfileDetailsProps) => {
                             className="w-32 h-32 rounded-full border-4 border-gray-600 shadow-md"
                         />
                         <label className="absolute bottom-3 right-3 cursor-pointer bg-gray-800 p-2 rounded-full border-4 border-slate-600 text-white">
-                            <CloudUpload />
+                            <Focus />
                             <input
                                 type="file"
                                 accept="image/*"
