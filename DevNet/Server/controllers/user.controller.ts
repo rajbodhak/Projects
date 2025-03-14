@@ -277,10 +277,10 @@ export const followOrUnfollow = async (req: AuthenticatedRequest, res: Response)
             User.findById(followObjectId)
         ]);
 
-        console.log("Current user ID:", userId);
-        console.log("Follow ID:", followId);
-        console.log("Current user ObjectId:", userObjectId);
-        console.log("Follow ObjectId:", followObjectId);
+        // console.log("Current user ID:", userId);
+        // console.log("Follow ID:", followId);
+        // console.log("Current user ObjectId:", userObjectId);
+        // console.log("Follow ObjectId:", followObjectId);
 
         if (!userToFollow || !currentUser) {
             return res.status(404).json({ error: "User not found", success: false });
