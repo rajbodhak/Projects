@@ -12,26 +12,18 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
 
   const handleFollowOrUnfollow = async () => {
     if (!userinfo._id) return;
-    console.log(userinfo._id)
 
     setIsLoading(true);
     try {
-      const token = localStorage.getItem("token"); // Get token from local storage
-      if (!token) {
-        console.log("User is not authenticated");
-        return;
-      }
 
       const response = await axios.post(
         `http://localhost:8000/api/users/follow/${userinfo._id}`,
         {},
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
+          withCredentials: true // This will send the cookies
         }
       );
+
       if (response.data.success) {
         setIsFollowing(response.data.isFollowing);
       }
@@ -43,13 +35,13 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
   };
 
   return (
-    <div className='p-2 rounded-2xl flex justify-between items-center'>
+    <div className='p-2 rounded-2xl flex justify-between items-center border border-gray-400 mt-2'>
       <div className='flex flex-col'>
         <span className='text-lg font-bold text-gray-800'>{userinfo.name}</span>
-        <span className='text-md text-gray-700'>{userinfo.username}</span>
+        <span className='text-md text-gray-700'>@{userinfo.username}</span>
       </div>
       <button
-        className={`btn-secondary mx-2 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`btn-secondary !w-28 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={handleFollowOrUnfollow}
         disabled={isLoading}
       >

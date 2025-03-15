@@ -26,10 +26,8 @@ const RightSideBar = () => {
                 <h1 className="text-2xl font-bold text-gray-800">Who to Follow</h1>
             </div>
             <div className='px-8 mt-2'>
-
                 {userData ? (
                     userData.map((user) => (
-
                         <SuggestedUserCard key={user._id} userinfo={user} />
                     ))
                 ) : (

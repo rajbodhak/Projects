@@ -251,6 +251,9 @@ export const getSuggestedUsers = async (req: AuthenticatedRequest, res: Response
 
 export const followOrUnfollow = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
+        console.log("Follow/unfollow endpoint hit");
+        console.log("Auth request cookies:", req.cookies);
+        console.log("User ID from middleware:", req.id);
         const userId = req.id;
         const { followId } = req.params;
 
