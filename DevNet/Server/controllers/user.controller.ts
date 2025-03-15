@@ -315,4 +315,44 @@ export const followOrUnfollow = async (req: AuthenticatedRequest, res: Response)
             success: false
         });
     }
-}
+};
+
+export const getFollowStatus = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
+    try {
+        const userId = req.id;
+        const { followId } = req.params;
+
+        if (!userId) {
+            return res.status(400).json({
+                error: "User not authenticated",
+                success: false
+            });
+        }
+
+        // Convert to ObjectId
+        const userObjectId = new mongoose.Types.ObjectId(userId);
+        const followObjectId = new mongoose.Types.ObjectId(followId);
+
+        // Get the current user
+        const currentUser = await User.findById(userObjectId);
+
+        if (!currentUser) {
+            return res.status(404).json({ error: "User not found", success: false });
+        }
+
+        // Check if following
+        const isFollowing = currentUser.following.some(id => id.equals(followObjectId));
+
+        return res.status(200).json({
+            success: true,
+            isFollowing
+        });
+
+    } catch (error) {
+        console.error("Get follow status error:", error);
+        return res.status(500).json({
+            error: "An error occurred while checking follow status",
+            success: false
+        });
+    }
+};

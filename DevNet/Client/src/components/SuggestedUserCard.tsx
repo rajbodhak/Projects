@@ -1,6 +1,6 @@
 import { User } from '@/lib/types';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SuggestedUserCardProps {
   userinfo: User;
@@ -10,17 +10,40 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check follow status when component mounts
+  useEffect(() => {
+    const checkFollowStatus = async () => {
+      if (!userinfo._id) return;
+
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/users/follow-status/${userinfo._id}`,
+          {
+            withCredentials: true
+          }
+        );
+
+        if (response.data.success) {
+          setIsFollowing(response.data.isFollowing);
+        }
+      } catch (error) {
+        console.log("Follow status check error:", error);
+      }
+    };
+
+    checkFollowStatus();
+  }, [userinfo._id]);
+
   const handleFollowOrUnfollow = async () => {
     if (!userinfo._id) return;
 
     setIsLoading(true);
     try {
-
       const response = await axios.post(
         `http://localhost:8000/api/users/follow/${userinfo._id}`,
         {},
         {
-          withCredentials: true // This will send the cookies
+          withCredentials: true
         }
       );
 
