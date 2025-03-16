@@ -321,3 +321,48 @@ export const bookmarkPost = async (req: AuthenticatedRequest, res: Response) => 
         });
     }
 };
+
+export const getBookmarkedPostsByUser = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const userId = req.id;
+
+        // Find the user with their bookmarks
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found", success: false });
+        }
+
+        // Check if there are any bookmarks
+        if (user.bookmarks.length === 0) {
+            return res.status(200).json({
+                posts: [],
+                success: true
+            });
+        }
+
+        // Fetch all bookmarked posts with populated fields
+        const bookmarkedPosts = await Post.find({
+            _id: { $in: user.bookmarks }
+        }).sort({ createdAt: -1 })
+            .populate({ path: 'user', select: 'username profilePicture' })
+            .populate({
+                path: 'comments',
+                options: { sort: { createdAt: -1 } },
+                populate: {
+                    path: 'user',
+                    select: 'username profilePicture',
+                }
+            });
+
+        return res.status(200).json({
+            posts: bookmarkedPosts,
+            success: true
+        });
+    } catch (error) {
+        console.log("GetBookmarkedPosts Internal Error", error);
+        return res.status(500).json({
+            error: "GetBookmarkedPosts Internal Server Error",
+            success: false
+        });
+    }
+};

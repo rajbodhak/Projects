@@ -8,7 +8,7 @@ interface AuthenticatedRequest extends Request {
 
 const isAuthenticated = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-        // console.log("Cookies received:", req.cookies);
+        console.log("Cookies received:", req.cookies);
         const token = req.cookies.token;
         if (!token) {
             console.log("No token found in cookies");

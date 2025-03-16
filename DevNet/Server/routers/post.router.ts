@@ -9,6 +9,7 @@ import {
     getCommentsByPosts,
     getPostsByUser,
     likePost,
+    getBookmarkedPostsByUser,
 } from "../controllers/post.controller.ts";
 import isAuthenticated from "../middlewares/isAuthenticated.ts";
 import upload from "../utils/multer.ts";
@@ -25,5 +26,6 @@ router.post("/bookmark/:postId", isAuthenticated, bookmarkPost);
 router.delete("/delete/:postId", isAuthenticated, deletePost);
 router.post("/comment/:postId", isAuthenticated, addComments);
 router.get("/comments/:postId", getCommentsByPosts);
+router.get("/bookmark-posts", isAuthenticated, getBookmarkedPostsByUser);
 
 export default router;

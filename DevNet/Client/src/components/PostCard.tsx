@@ -18,19 +18,21 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
     const [postData, setPostData] = useState<Post | null>(null);
     const { user } = useAuth();
 
-
     useEffect(() => {
         if (post) {
             setPostData(post);
-            // console.log("Setting postData from props:", post);
         }
     }, [post]);
 
     useEffect(() => {
         if (user && post) {
-            // console.log("User: ", user)
+            // Set liked state
             setLiked(post.likes.includes(user._id));
-            setBookmarked(user?.bookmarks?.includes(post._id) || false);
+
+            // Properly check if the post is bookmarked
+            // Make sure user.bookmarks exists and is an array before checking
+            const isBookmarked = Array.isArray(user.bookmarks) && user.bookmarks.includes(post._id);
+            setBookmarked(isBookmarked);
         }
     }, [user, post]);
 
@@ -63,7 +65,18 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
             const response = await axios.post(`api/posts/bookmark/${post._id}`, {}, { withCredentials: true });
 
             if (response.data.success) {
-                setBookmarked((prev) => !prev)
+                setBookmarked((prev) => !prev);
+
+                // If we have a user, update their bookmarks locally to maintain state
+                if (user && typeof user.bookmarks !== 'undefined') {
+                    if (!bookmarked) {
+                        // Adding to bookmarks
+                        user.bookmarks = [...(user.bookmarks || []), post._id];
+                    } else {
+                        // Removing from bookmarks
+                        user.bookmarks = user.bookmarks.filter(id => id !== post._id);
+                    }
+                }
             }
         } catch (error) {
             console.log("Bookmark toggling error", error);
@@ -127,7 +140,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
 
     return (
         <>
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 p-4 rounded-xl max-w-xl">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 p-4 rounded-xl w-xl">
                 <div className="flex justify-between">
                     <div className="flex items-center">
                         <img src={postData?.user?.profilePicture} alt={postData?.user?.username} className="w-11 h-11 rounded-full" />
@@ -141,7 +154,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
                         {isOwnPost && (
                             <button
                                 onClick={handleDelete}
-                                className="text-red-500 hover:text-red-700"
+                                className="text-red-500 hover:text-red-700 ml-2"
                                 title="Delete post"
                             >
                                 <Trash2 size={18} />

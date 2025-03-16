@@ -32,9 +32,13 @@ const CreatePost = () => {
             formData.append("content", content);
             if (image) formData.append("image", image);
 
-            const response = await axios.post("http://localhost:8000/api/posts/add-post", formData, { withCredentials: true });
+            // Using relative URL instead of absolute URL
+            const response = await axios.post("/api/posts/add-post", formData, { withCredentials: true });
+
             if (response.data.success) {
                 console.log("Post created successfully");
+
+                // Reset form
                 setContent('');
                 setImage(null);
                 setPreview(null);
