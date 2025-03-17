@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
 import { ImageIcon, XCircle } from "lucide-react";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { Rootstate } from "@/redux/store";
 
 const CreatePost = () => {
     const [content, setContent] = useState('');
     const [image, setImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
-    const { user } = useAuth();
+    const { user } = useSelector((state: Rootstate) => state.auth);
 
     // Handle File Change
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

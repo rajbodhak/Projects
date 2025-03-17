@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import ProfileDetails from "@/components/ProfileDetails";
 import ProfileEdit from "@/components/ProfileEdit";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Rootstate } from "@/redux/store";
 
 const Profile = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const { user } = useAuth();
+    const { user } = useSelector((state: Rootstate) => state.auth);
     const navigate = useNavigate();
     useEffect(() => {
         const fetchData = async () => {

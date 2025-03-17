@@ -1,9 +1,11 @@
 import { Heart, MessageCircle, Bookmark, Trash2 } from "lucide-react";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
 import { Post, Comment } from "@/lib/types";
 import { CommentModal } from "./CommentModal";
+import { useSelector, useDispatch } from "react-redux";
+import { Rootstate } from "@/redux/store";
+import { setAuthUser } from "@/redux/authSlice";
 
 interface PostCardProps {
     post: Post;
@@ -16,7 +18,8 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
     const [liked, setLiked] = useState(false);
     const [bookmarked, setBookmarked] = useState(false);
     const [postData, setPostData] = useState<Post | null>(null);
-    const { user, setUser } = useAuth();
+    const { user } = useSelector((state: Rootstate) => state.auth);
+    const dispatch = useDispatch(); // Add dispatch to update Redux store
 
     useEffect(() => {
         if (post) {
@@ -113,8 +116,8 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
                     bookmarks: updatedBookmarks
                 };
 
-                // Update the Auth Context with the new user data
-                setUser(updatedUser);
+                // Update Redux state with the new user data
+                dispatch(setAuthUser(updatedUser));
             }
         } catch (error) {
             console.log("Bookmark toggling error", error);

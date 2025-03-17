@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Send, X } from "lucide-react";
 import axios from "axios";
 import { Comment } from "@/lib/types";
-import { useAuth } from "@/context/AuthContext";
-
+import { useSelector } from "react-redux";
+import { Rootstate } from "@/redux/store";
 
 interface CommentModalProps {
     isOpen: boolean;
@@ -16,7 +16,7 @@ interface CommentModalProps {
 export const CommentModal: React.FC<CommentModalProps> = ({ isOpen, onClose, postId, comments, onCommentAdded }) => {
     const [commentText, setCommentText] = useState("");
     const [loading, setLoading] = useState(false);
-    const { user } = useAuth();
+    const { user } = useSelector((state: Rootstate) => state.auth)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
