@@ -290,8 +290,6 @@ export const bookmarkPost = async (req: AuthenticatedRequest, res: Response) => 
             return res.status(404).json({ error: "User not found", success: false });
         };
 
-        // Proper type handling - assuming post._id is accessible via your IPost interface
-        // If we get the post from MongoDB, we can safely access it this way
         const postObjectId = post._id as unknown as mongoose.Types.ObjectId;
         const postIdStr = postObjectId.toString();
 

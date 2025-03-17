@@ -2,7 +2,7 @@ import { Home, Search, Bell, Mail, Bookmark, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const sideBarItems = [
-    { icon: <Home />, itemName: "Home", path: "/" },
+    { icon: <Home />, itemName: "Home", path: "/home" },
     { icon: <Search />, itemName: "Search", path: "/search" },
     { icon: <Bell />, itemName: "Notifications", path: "/notifications" },
     { icon: <Mail />, itemName: "Messages", path: "/messages" },

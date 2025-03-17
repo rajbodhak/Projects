@@ -33,7 +33,7 @@ const Bookmarks = () => {
     if (isLoading) return <h1 className='text-2xl font-bold text-center'>Loading...</h1>;
 
     return (
-        <div className='flex flex-col items-center justify-center w-[80%] lg:ml-[20%] gap-3'>
+        <div className='flex flex-col items-center justify-center w-[80%] gap-3'>
             <h1 className='text-2xl text-center font-bold text-gray-800 mb-4'>Bookmarks</h1>
             {bookmarkedPosts.length > 0 ? (
                 bookmarkedPosts.map((post) => (
