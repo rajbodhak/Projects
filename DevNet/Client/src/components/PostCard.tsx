@@ -6,6 +6,7 @@ import { CommentModal } from "./CommentModal";
 import { useSelector, useDispatch } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import { setAuthUser } from "@/redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 interface PostCardProps {
     post: Post;
@@ -20,6 +21,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
     const [postData, setPostData] = useState<Post | null>(null);
     const { user } = useSelector((state: Rootstate) => state.auth);
     const dispatch = useDispatch(); // Add dispatch to update Redux store
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (post) {
@@ -177,6 +179,15 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
         })
     };
 
+    const handleRedirectProfile = () => {
+        if (post?.user?._id) {
+            navigate(`/${post.user._id}`);
+        } else {
+            console.log("User ID is undefined");
+        }
+    };
+
+
     const isOwnPost = user?._id === postData?.user?._id;
 
     return (
@@ -184,10 +195,10 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 p-4 rounded-xl w-xl">
                 <div className="flex justify-between">
                     <div className="flex items-center">
-                        <img src={postData?.user?.profilePicture} alt={postData?.user?.username} className="w-11 h-11 rounded-full" />
+                        <img src={postData?.user?.profilePicture} alt={postData?.user?.username} className="w-11 h-11 rounded-full cursor-pointer" onClick={handleRedirectProfile} />
                         <div className="ml-1.5 text-sm leading-tight">
-                            <span className="text-black dark:text-white font-bold block">{postData?.user?.username}</span>
-                            <span className="text-gray-500 dark:text-gray-300 font-normal block">@{postData?.user?.username?.toLowerCase() || 'user'}</span>
+                            <span className="text-black dark:text-white font-bold block cursor-pointer" onClick={handleRedirectProfile}>{postData?.user?.username}</span>
+                            <span className="text-gray-500 dark:text-gray-300 font-normal block cursor-pointer" onClick={handleRedirectProfile}>@{postData?.user?.username?.toLowerCase() || 'user'}</span>
                         </div>
                     </div>
                     <div className="flex items-center">

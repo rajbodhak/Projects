@@ -20,7 +20,7 @@ router.post("/login", login);
 router.post("/logout", logout);
 router.get("/user/:id", isAuthenticated, getuser);
 router.get("/suggested-users", isAuthenticated, getSuggestedUsers);
-router.get("/:id", isAuthenticated, getProfile);
+router.get("/:id/profile", isAuthenticated, getProfile);
 router.put("/profile/edit", isAuthenticated, upload.single("profilePicture"), editUser);
 router.post("/follow/:followId", isAuthenticated, followOrUnfollow);
 router.get('/follow-status/:followId', isAuthenticated, getFollowStatus);

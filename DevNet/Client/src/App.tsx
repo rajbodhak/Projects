@@ -9,7 +9,7 @@ import Messages from './Pages/Messages'
 import Search from './Pages/Search'
 import Bookmarks from './Pages/Bookmarks'
 import Profile from './Pages/Profile'
-
+import UserProfile from './Pages/UserProfile'
 
 const browserRouter = createBrowserRouter([
   {
@@ -23,6 +23,10 @@ const browserRouter = createBrowserRouter([
       {
         path: '/home',
         element: <Home />,
+      },
+      {
+        path: '/:id',
+        element: <UserProfile />
       },
       {
         path: '/search',
