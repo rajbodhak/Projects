@@ -176,6 +176,19 @@ interface AuthenticatedRequest extends Request {
     file?: Express.Multer.File;
 }
 
+export const getProfile = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const userId = req.params.id;
+        let user = await User.findById(userId).populate({ path: 'posts', options: { sort: { createdAt: -1 } } }).populate('bookmarks');
+        return res.status(200).json({
+            user,
+            success: true
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 export const editUser = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
         const userId = req.id;

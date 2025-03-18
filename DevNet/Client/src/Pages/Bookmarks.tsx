@@ -34,7 +34,7 @@ const Bookmarks = () => {
 
     return (
         <div className='flex flex-col items-center justify-center w-[80%] gap-3'>
-            <h1 className='text-2xl text-center font-bold text-gray-800 mb-4'>Bookmarks</h1>
+            <h1 className='text-2xl text-center font-bold text-gray-800 mb-4'>Your BookedMark Posts</h1>
             {bookmarkedPosts.length > 0 ? (
                 bookmarkedPosts.map((post) => (
                     <PostCard

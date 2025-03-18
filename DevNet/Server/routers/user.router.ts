@@ -7,7 +7,8 @@ import {
     getSuggestedUsers,
     editUser,
     followOrUnfollow,
-    getFollowStatus
+    getFollowStatus,
+    getProfile
 } from "../controllers/user.controller.ts";
 import isAuthenticated from "../middlewares/isAuthenticated.ts";
 import upload from "../utils/multer.ts";
@@ -19,6 +20,7 @@ router.post("/login", login);
 router.post("/logout", logout);
 router.get("/user/:id", isAuthenticated, getuser);
 router.get("/suggested-users", isAuthenticated, getSuggestedUsers);
+router.get("/:id", isAuthenticated, getProfile);
 router.put("/profile/edit", isAuthenticated, upload.single("profilePicture"), editUser);
 router.post("/follow/:followId", isAuthenticated, followOrUnfollow);
 router.get('/follow-status/:followId', isAuthenticated, getFollowStatus);
