@@ -3,9 +3,9 @@ import LeftSideBar from "./LeftSideBar"
 
 const MainLayout = () => {
     return (
-        <div className="flex w-full min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="flex w-full min-h-screen  dark:bg-gray-900">
             {/* Fixed width sidebar */}
-            <div className="w-64 flex-shrink-0">
+            <div className="md:w-64 flex-shrink-0">
                 <div className="fixed h-screen">
                     <LeftSideBar />
                 </div>

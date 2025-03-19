@@ -46,6 +46,7 @@ export interface Comment {
     createdAt: string;
     text: string;
     user: {
+        _id: string;
         username: string;
         profilePicture?: string;
     };

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Send, X } from "lucide-react";
 import axios from "axios";
 import { Comment } from "@/lib/types";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
+import { useNavigate } from "react-router-dom";
 
 interface CommentModalProps {
     isOpen: boolean;
@@ -16,7 +17,39 @@ interface CommentModalProps {
 export const CommentModal: React.FC<CommentModalProps> = ({ isOpen, onClose, postId, comments, onCommentAdded }) => {
     const [commentText, setCommentText] = useState("");
     const [loading, setLoading] = useState(false);
-    const { user } = useSelector((state: Rootstate) => state.auth)
+    const { user } = useSelector((state: Rootstate) => state.auth);
+    const modalRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
+
+    // Handle click outside to close modal
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+                onClose();
+            }
+        };
+
+        // Prevent background scrolling
+        const handleScroll = (e: Event) => {
+            if (isOpen) {
+                e.preventDefault();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+            document.body.style.overflow = "hidden"; // Prevent scrolling
+            document.addEventListener("wheel", handleScroll, { passive: false });
+            document.addEventListener("touchmove", handleScroll, { passive: false });
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.body.style.overflow = ""; // Re-enable scrolling
+            document.removeEventListener("wheel", handleScroll);
+            document.removeEventListener("touchmove", handleScroll);
+        };
+    }, [isOpen, onClose]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -44,8 +77,11 @@ export const CommentModal: React.FC<CommentModalProps> = ({ isOpen, onClose, pos
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg mx-4 shadow-lg">
+        <div className="fixed inset-0 bg-black/65 h-screen bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
+            <div
+                ref={modalRef}
+                className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg mx-4 shadow-lg"
+            >
                 <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
                     <h3 className="text-lg font-semibold text-black dark:text-white">Comments</h3>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
@@ -63,11 +99,14 @@ export const CommentModal: React.FC<CommentModalProps> = ({ isOpen, onClose, pos
                                     <img
                                         src={comment.user.profilePicture || "/api/placeholder/32/32"}
                                         alt={comment.user.username}
-                                        className="w-8 h-8 rounded-full flex-shrink-0"
+                                        className="w-8 h-8 rounded-full flex-shrink-0 cursor-pointer"
+                                        onClick={() => navigate(`/${comment.user?._id}`)}
                                     />
                                     <div className="ml-2 flex-1">
                                         <div className="flex items-center">
-                                            <span className="font-semibold text-black dark:text-white">
+                                            <span
+                                                className="font-semibold text-black dark:text-white cursor-pointer"
+                                                onClick={() => navigate(`/${comment.user?._id}`)}>
                                                 {comment.user.username}
                                             </span>
                                             <span className="ml-2 text-xs text-gray-500">
@@ -88,7 +127,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({ isOpen, onClose, pos
                             <img
                                 src={user.profilePicture || "/api/placeholder/32/32"}
                                 alt="Your profile"
-                                className="w-8 h-8 rounded-full flex-shrink-0"
+                                className="w-8 h-8 rounded-full flex-shrink-0 cursor-pointer"
                             />
                             <input
                                 type="text"

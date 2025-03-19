@@ -14,7 +14,7 @@ const Home = () => {
             </div>
 
             {/* Right sidebar - fixed width */}
-            <div className="hidden lg:block w-80 flex-shrink-0">
+            <div className="hidden lg:block lg:w-80 flex-shrink-0">
                 <div className="sticky top-0">
                     <RightSideBar />
                 </div>
