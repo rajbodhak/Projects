@@ -10,6 +10,7 @@ import Search from './Pages/Search';
 import Bookmarks from './Pages/Bookmarks';
 import Profile from './Pages/Profile';
 import UserProfile from './Pages/UserProfile';
+import Setting from './Pages/Setting';
 
 const browserRouter = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ const browserRouter = createBrowserRouter([
           { path: '/messages', element: <Messages /> },
           { path: '/bookmarks', element: <Bookmarks /> },
           { path: '/profile', element: <Profile /> },
+          { path: '/settings', element: <Setting /> }
         ],
       },
     ],

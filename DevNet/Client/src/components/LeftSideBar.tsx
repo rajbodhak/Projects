@@ -1,18 +1,22 @@
 import { Home, Search, Bell, Mail, Bookmark, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-
-const sideBarItems = [
-    { icon: <Home />, itemName: "Home", path: "/home" },
-    { icon: <Search />, itemName: "Search", path: "/search" },
-    { icon: <Bell />, itemName: "Notifications", path: "/notifications" },
-    { icon: <Mail />, itemName: "Messages", path: "/messages" },
-    { icon: <Bookmark />, itemName: "Bookmarks", path: "/bookmarks" },
-    { icon: <User />, itemName: "Profile", path: "/profile" },
-];
+import { useSelector } from "react-redux";
+import { Rootstate } from "@/redux/store";
 
 const LeftSideBar = () => {
+
     const location = useLocation();
     const navigate = useNavigate();
+    const user = useSelector((state: Rootstate) => state.auth.user);
+
+    const sideBarItems = [
+        { icon: <Home />, itemName: "Home", path: "/home" },
+        { icon: <Search />, itemName: "Search", path: "/search" },
+        { icon: <Bell />, itemName: "Notifications", path: "/notifications" },
+        { icon: <Mail />, itemName: "Messages", path: "/messages" },
+        { icon: <Bookmark />, itemName: "Bookmarks", path: "/bookmarks" },
+        { icon: <User />, itemName: "Profile", path: `/${user?._id}` },
+    ];
 
     const sidebarItemHandler = (path: string) => {
         navigate(path);
