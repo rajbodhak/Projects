@@ -91,7 +91,9 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
             github: user.github,
             skills: user.skills,
             bookmarks: user.bookmarks,
-            posts: user.posts
+            posts: user.posts,
+            followers: user.followers,
+            following: user.following
         };
 
         // Generate token
@@ -261,6 +263,30 @@ export const getSuggestedUsers = async (req: AuthenticatedRequest, res: Response
         });
     }
 };
+
+export const getFollowingUsers = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
+    try {
+        if (!req.id) {
+            return res.status(401).json({ error: "User not authenticated", success: false });
+        }
+
+        const user = await User.findById(req.id).populate("following", "username name profilePicture");
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found", success: false });
+        }
+
+        return res.status(200).json({
+            following: user.following,
+            success: true
+        });
+
+    } catch (error) {
+        console.error("Error fetching following users:", error);
+        return res.status(500).json({ error: "An error occurred", success: false });
+    }
+};
+
 
 export const followOrUnfollow = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
