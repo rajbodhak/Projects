@@ -32,7 +32,7 @@ const UserProfile = () => {
 
             try {
                 setLoading(true);
-                const response = await axios.get(`/api/posts/${id}`, { withCredentials: true });
+                const response = await axios.get(`/api/posts/user/${id}`, { withCredentials: true });
 
                 if (response.data.success) {
                     setUserPosts(response.data.posts);
@@ -47,20 +47,6 @@ const UserProfile = () => {
         fetchUserPosts();
     }, [id]);
 
-    // useEffect(() => {
-    //     if (!id) return;
-    //     try {
-    //         setLoading(true);
-    //         if (userProfileData?.posts) {
-    //             console.log("User Posts: ", userProfileData.posts)
-    //             setUserPosts(userProfileData.posts);
-    //         }
-    //     } catch (error) {
-    //         console.log("User Profile Fetching Error: ", error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // }, [id])
 
     // Check follow status when component mounts
     useEffect(() => {

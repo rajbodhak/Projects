@@ -11,8 +11,9 @@ const Bookmarks = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const response = await axios.get("http://localhost:8000/api/posts/bookmark-posts/", { withCredentials: true });
+                const response = await axios.get("http://localhost:8000/api/posts/bookmarks", { withCredentials: true });
                 if (response.data.success) {
+                    console.log("Bookmarks", response.data.posts);
                     setBookmarkedPosts(response.data.posts);
                 }
             } catch (error) {
@@ -33,7 +34,7 @@ const Bookmarks = () => {
     if (isLoading) return <h1 className='text-2xl font-bold text-center'>Loading...</h1>;
 
     return (
-        <div className='flex flex-col items-center justify-center w-[80%] gap-3'>
+        <div className='flex flex-col items-center justify-center w-[80%] gap-3 lg:ml-28'>
             <h1 className='text-2xl text-center font-bold text-gray-800 mb-4'>Your BookedMark Posts</h1>
             {bookmarkedPosts.length > 0 ? (
                 bookmarkedPosts.map((post) => (

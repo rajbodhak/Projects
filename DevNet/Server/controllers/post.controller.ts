@@ -324,7 +324,6 @@ export const getBookmarkedPostsByUser = async (req: AuthenticatedRequest, res: R
     try {
         const userId = req.id;
 
-        // Find the user with their bookmarks
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ error: "User not found", success: false });

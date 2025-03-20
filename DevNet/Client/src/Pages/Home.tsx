@@ -7,7 +7,7 @@ const Home = () => {
         <div className="flex w-full">
             {/* Main feed - takes up more space */}
             <div className="flex-1 flex flex-col items-center px-4">
-                <div className="w-full max-w-xl">
+                <div className="w-full max-w-xl mt-3">
                     <CreatePost />
                     <Feed />
                 </div>

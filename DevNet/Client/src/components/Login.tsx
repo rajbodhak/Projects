@@ -76,12 +76,10 @@ const Login = () => {
                 });
                 if (response.data.success) {
                     dispatch(setAuthUser(response.data.user));
-                    // setUser(response.data.user);
                     console.log("User after setUser:", localStorage.getItem('user'));
                     navigate("/");
                     toast.success(response.data.message)
                 }
-                // console.log("User logged in successfully", response.data);
                 setInput({ email: "", password: "" });
 
                 // TODO:

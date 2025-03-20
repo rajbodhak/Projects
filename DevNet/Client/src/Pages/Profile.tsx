@@ -46,7 +46,7 @@ const Profile = () => {
 
     return (
         <div>
-            <h1 className="text-2xl font-bold mb-4">Profile Page</h1>
+            <h1 className="text-2xl font-bold mb-4 text-center">Profile Page</h1>
             {loading && <p>Loading...</p>}
             {error && <p>{error}</p>}
 
