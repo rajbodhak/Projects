@@ -5,12 +5,14 @@ import { User } from "@/lib/types";
 interface AuthState {
     user: User | null;
     userProfile: User | null;
+    chatUser: User | null;
 };
 
 const storedUser = localStorage.getItem("authUser");
 const initialState: AuthState = {
     user: storedUser ? JSON.parse(storedUser) : null,
-    userProfile: null
+    userProfile: null,
+    chatUser: null
 };
 
 export const authSlice = createSlice({
@@ -25,6 +27,9 @@ export const authSlice = createSlice({
         setUserProfile: (state, action: PayloadAction<User | null>) => {
             state.userProfile = action.payload;
         },
+        setChatUser: (state, action: PayloadAction<User | null>) => {
+            state.chatUser = action.payload;
+        },
         logoutUser: (state) => {
             state.user = null;
             localStorage.removeItem("authUser");
@@ -32,5 +37,5 @@ export const authSlice = createSlice({
     }
 });
 
-export const { setAuthUser, setUserProfile } = authSlice.actions;
+export const { setAuthUser, setUserProfile, setChatUser } = authSlice.actions;
 export default authSlice.reducer;
