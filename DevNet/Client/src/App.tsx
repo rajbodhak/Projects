@@ -11,10 +11,11 @@ import Bookmarks from './Pages/Bookmarks';
 import Profile from './Pages/Profile';
 import UserProfile from './Pages/UserProfile';
 import Setting from './Pages/Setting';
-import { io } from "socket.io-client";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Rootstate } from './redux/store';
 import { useEffect } from 'react';
+import { setSocketConnected, setSocketId } from './redux/socketSlice';
+import socketService from './services/socketService'
 
 const browserRouter = createBrowserRouter([
   // Public routes
@@ -54,17 +55,35 @@ const browserRouter = createBrowserRouter([
 
 function App() {
   const { user } = useSelector((state: Rootstate) => state.auth);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (user) {
-      const socketio = io('http://localhost:8000', {
-        query: {
-          userId: user._id
-        },
-        transports: ['websocket']
+      const socket = socketService.connect(user._id);
+
+      socket.on('connect', () => {
+        dispatch(setSocketConnected(true));
+        dispatch(setSocketId(socket.id ?? null));
       });
 
+      socket.on('disconnect', () => {
+        dispatch(setSocketConnected(false));
+        dispatch(setSocketId(null));
+      });
+
+      // Handle online users if needed in your app
+      socket.on('getOnlineUsers', (onlineUsers) => {
+        // Dispatch to Redux if you need to track this
+        // dispatch(setOnlineUsers(onlineUsers));
+      });
+
+      // Clean up on unmount
+      return () => {
+        socketService.disconnect();
+      };
     }
-  }, [])
+  }, [user, dispatch]);
+
   return <RouterProvider router={browserRouter} />;
 }
 
