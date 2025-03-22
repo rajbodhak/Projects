@@ -6,11 +6,10 @@ import connectDB from "../config/db.ts";
 import userRoutes from "../routers/user.router.ts";
 import postRoutes from "../routers/post.router.ts";
 import messageRoutes from "../routers/message.router.ts";
+import { app, server } from "../socket/socket.ts"
 
 // Load environment variables first
 dotenv.config();
-
-const app = express();
 
 // Middleware
 app.use(express.json());
@@ -36,7 +35,7 @@ const PORT = parseInt(process.env.PORT || "8000", 10);
 // Connect to database first, then start server
 connectDB()
     .then(() => {
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log(`Server is running on http://localhost:${PORT}`);
         });
     })

@@ -11,32 +11,13 @@ import Bookmarks from './Pages/Bookmarks';
 import Profile from './Pages/Profile';
 import UserProfile from './Pages/UserProfile';
 import Setting from './Pages/Setting';
+import { io } from "socket.io-client";
+import { useSelector } from 'react-redux';
+import { Rootstate } from './redux/store';
+import { useEffect } from 'react';
 
 const browserRouter = createBrowserRouter([
-  {
-    path: '/',
-    element: <MainLayout />,
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/home" replace />,
-      },
-      {
-        path: '/',
-        element: <AuthGuard />,
-        children: [
-          { path: '/home', element: <Home /> },
-          { path: '/:id', element: <UserProfile /> },
-          { path: '/search', element: <Search /> },
-          { path: '/notifications', element: <Notifications /> },
-          { path: '/messages', element: <Messages /> },
-          { path: '/bookmarks', element: <Bookmarks /> },
-          { path: '/profile', element: <Profile /> },
-          { path: '/settings', element: <Setting /> }
-        ],
-      },
-    ],
-  },
+  // Public routes
   {
     path: '/signup',
     element: <SignUp />,
@@ -45,9 +26,45 @@ const browserRouter = createBrowserRouter([
     path: '/login',
     element: <Login />,
   },
+  // Protected routes
+  {
+    path: '/',
+    element: <AuthGuard />,
+    children: [
+      {
+        element: <MainLayout />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/home" replace />,
+          },
+          { path: 'home', element: <Home /> }, // Note: removed leading slash
+          { path: ':id', element: <UserProfile /> },
+          { path: 'search', element: <Search /> },
+          { path: 'notifications', element: <Notifications /> },
+          { path: 'messages', element: <Messages /> },
+          { path: 'bookmarks', element: <Bookmarks /> },
+          { path: 'profile', element: <Profile /> },
+          { path: 'settings', element: <Setting /> }
+        ],
+      },
+    ],
+  },
 ]);
 
 function App() {
+  const { user } = useSelector((state: Rootstate) => state.auth);
+  useEffect(() => {
+    if (user) {
+      const socketio = io('http://localhost:8000', {
+        query: {
+          userId: user._id
+        },
+        transports: ['websocket']
+      });
+
+    }
+  }, [])
   return <RouterProvider router={browserRouter} />;
 }
 

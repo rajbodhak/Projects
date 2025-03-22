@@ -71,6 +71,11 @@ const Messages = () => {
             <section className="flex-1 flex flex-col">
                 {/* Chat Header */}
                 <div className="p-4 border-b border-gray-700 bg-gray-800 flex items-center">
+                    {
+                        chatUser && <img src={chatUser?.profilePicture} alt=' '
+                            className="w-9 h-9 rounded-full flex-shrink-0 cursor-pointer object-cover mr-3 border-2 border-gray-500"
+                        />
+                    }
                     <h1 className="text-xl font-bold">{chatUser?.name || "Select a user"}</h1>
                 </div>
 
