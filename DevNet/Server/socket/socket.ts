@@ -12,11 +12,11 @@ const io = new Server(server, {
     }
 });
 
-const userSocketMap: Record<string, string> = {}; // Ensures object keys are always strings
+const userSocketMap: Record<string, string> = {};
 
 io.on("connection", (socket) => {
     const userId = Array.isArray(socket.handshake.query.id)
-        ? socket.handshake.query.id[0]  // Take the first element if it's an array
+        ? socket.handshake.query.id[0]
         : socket.handshake.query.id;
 
     if (userId) {  // Ensuring userId is defined

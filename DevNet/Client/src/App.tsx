@@ -2,20 +2,15 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import AuthGuard from './components/AuthGuard';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
-import Home from './Pages/Home';
 import MainLayout from './components/MainLayout';
-import Notifications from './Pages/Notifications';
-import Messages from './Pages/Messages';
-import Search from './Pages/Search';
-import Bookmarks from './Pages/Bookmarks';
-import Profile from './Pages/Profile';
-import UserProfile from './Pages/UserProfile';
-import Setting from './Pages/Setting';
+import Home from './Pages/Home';
+import { Bookmarks, Messages, Notifications, Profile, Search, Setting, UserProfile } from './Pages/pages.ts'
 import { useDispatch, useSelector } from 'react-redux';
 import { Rootstate } from './redux/store';
 import { useEffect } from 'react';
 import { setSocketConnected, setSocketId } from './redux/socketSlice';
 import socketService from './services/socketService'
+import { setOnlineUsers } from './redux/chatSlice';
 
 const browserRouter = createBrowserRouter([
   // Public routes
@@ -74,7 +69,7 @@ function App() {
       // Handle online users if needed in your app
       socket.on('getOnlineUsers', (onlineUsers) => {
         // Dispatch to Redux if you need to track this
-        // dispatch(setOnlineUsers(onlineUsers));
+        dispatch(setOnlineUsers(onlineUsers));
       });
 
       // Clean up on unmount
