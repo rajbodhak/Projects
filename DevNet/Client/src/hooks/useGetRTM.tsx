@@ -6,7 +6,6 @@ import socketService from "@/services/socketService";
 
 const useGetRTM = () => {
     const dispatch = useDispatch();
-    const { socketId } = useSelector((state: Rootstate) => state.socketIo);
     const { messages } = useSelector((state: Rootstate) => state.chat);
 
     useEffect(() => {
