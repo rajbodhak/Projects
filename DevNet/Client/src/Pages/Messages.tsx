@@ -7,13 +7,15 @@ import { Rootstate } from "@/redux/store";
 import { Send } from "lucide-react";
 import { setMessages } from "@/redux/chatSlice";
 import useGetMessages from "@/hooks/useGetMessages";
+import useGetRTM from "@/hooks/useGetRTM";
 
 const Messages = () => {
     const [followingUsers, setFollowingUsers] = useState<User[]>([]);
     const [textMessage, setTextMessage] = useState("");
     const dispatch = useDispatch();
-    const { chatUser } = useSelector((state: Rootstate) => state.auth);
+    const { chatUser, user } = useSelector((state: Rootstate) => state.auth);
     const { onlineUsers, messages } = useSelector((state: Rootstate) => state.chat);
+    useGetRTM();
     useGetMessages();
 
     useEffect(() => {
@@ -92,8 +94,14 @@ const Messages = () => {
         return () => {
             dispatch(setChatUser(null))
         }
-    }, [])
+    }, []);
 
+    function formatTime(isoTimestamp: string): string {
+        const date = new Date(isoTimestamp);
+        const hours = date.getUTCHours().toString().padStart(2, '0');
+        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`
+    }
     return (
         <div className="flex min-h-screen w-full bg-gray-900 text-white">
             {/* Sidebar */}
@@ -119,7 +127,7 @@ const Messages = () => {
                                             <p className="text-gray-400">@{user.username}</p>
                                         </div>
                                     </div>
-                                    <span className={`text-xs lg:text-sm font-bold ${onlineUser ? 'text-green-600' : 'text-red-600'}`}>
+                                    <span className={`text-xs lg:text-sm font-bold ${onlineUser ? 'text-green-600' : 'text-gray-600'}`}>
                                         {onlineUser ? 'online' : 'offline'}
                                     </span>
                                 </div>
@@ -148,9 +156,10 @@ const Messages = () => {
                 < div className="flex-1 overflow-y-auto p-4 space-y-3" >
                     {messages.length > 0 ? (
                         messages.map((msg, index) => (
-                            <div key={index} className="flex justify-end">
-                                <p className="bg-blue-500 px-4 py-2 rounded-lg text-white">
+                            <div key={index} className={`flex ${msg.sender === user?._id ? 'justify-end' : 'justify-start'}`}>
+                                <p className="bg-blue-500 pl-3 pr-1 py-2 rounded-lg text-white">
                                     {typeof msg === 'string' ? msg : msg.message}
+                                    <span className="ml-4 text-xs bottom-1 right-1">{formatTime(msg.createdAt)}</span>
                                 </p>
                             </div>
                         ))
