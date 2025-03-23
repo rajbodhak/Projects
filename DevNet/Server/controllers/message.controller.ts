@@ -4,6 +4,7 @@ import User from "../models/user.model.ts";
 import Conversation from "../models/conversation.model.ts";
 import Message from "../models/message.model.ts";
 import mongoose from "mongoose";
+import { getRecieverSocketId, io } from "../socket/socket.ts";
 
 interface AuthenticatedRequest extends Request {
     id?: string;
@@ -13,8 +14,10 @@ interface AuthenticatedRequest extends Request {
 export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userId = req.id;
-        const { receiverId } = req.params;  // Fixed spelling
-        const { message } = req.body;
+        const { receiverId } = req.params;
+        // console.log("receiverId:", receiverId);
+        const { textMessage: message } = req.body;
+        console.log("Message: ", message)
 
         // Validation
         if (!message) {
@@ -46,9 +49,16 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
 
         await Promise.all([conversation?.save(), newMessage.save()]);
 
+        const revieverSocketId = getRecieverSocketId(receiverId);
+
+        if (revieverSocketId) {
+            io.to(revieverSocketId).emit('newMessage', newMessage);
+        }
+
         return res.status(200).json({
             message: "Message sent successfully",
-            success: true
+            success: true,
+            newMessage
         });
     } catch (error) {
         console.log("Send message error", error);
@@ -59,7 +69,7 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
     }
 };
 
-export const getMessage = async (req: AuthenticatedRequest, res: Response) => {
+export const getMessages = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userId = req.id;
         const { receiverId } = req.params;

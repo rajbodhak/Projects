@@ -5,13 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { setChatUser } from "@/redux/authSlice";
 import { Rootstate } from "@/redux/store";
 import { Send } from "lucide-react";
+import { setMessages } from "@/redux/chatSlice";
+import useGetMessages from "@/hooks/useGetMessages";
 
 const Messages = () => {
     const [followingUsers, setFollowingUsers] = useState<User[]>([]);
-    const [messages, setMessages] = useState<string[]>([]);
-    const [input, setInput] = useState("");
+    const [textMessage, setTextMessage] = useState("");
     const dispatch = useDispatch();
     const { chatUser } = useSelector((state: Rootstate) => state.auth);
+    const { onlineUsers, messages } = useSelector((state: Rootstate) => state.chat);
+    useGetMessages();
 
     useEffect(() => {
         const fetchFollowingUsers = async () => {
@@ -31,15 +34,32 @@ const Messages = () => {
 
     const handleUserClick = (user: User) => {
         dispatch(setChatUser(user));
-        setMessages([]); // Reset messages when switching users
+        // setMessage("");
     };
 
-    const handleSendMessage = () => {
-        if (input.trim()) {
-            setMessages([...messages, input]);
-            setInput("");
+    const handleSendMessage = async (receiverId: string) => {
+        // console.log("Sending message to:", receiverId);
+        try {
+            const response = await axios.post(`http://localhost:8000/api/message/send/${receiverId}`, { textMessage }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                withCredentials: true
+            });
+            if (response.data.success && textMessage.trim()) {
+                dispatch(setMessages([...messages, response.data.newMessage]));
+                setTextMessage("");
+            }
+        } catch (error) {
+            console.log("Message sending error in MessagePage: ", error)
         }
     };
+
+    useEffect(() => {
+        return () => {
+            dispatch(setChatUser(null))
+        }
+    }, [])
 
     return (
         <div className="flex min-h-screen w-full bg-gray-900 text-white">
@@ -50,42 +70,54 @@ const Messages = () => {
                 </h1>
                 <div className="px-4">
                     {followingUsers.length > 0 ? (
-                        followingUsers.map((user) => (
-                            <div
-                                key={user._id}
-                                className={`px-4 py-3 rounded-lg my-2 cursor-pointer border border-gray-700 
+                        followingUsers.map((user) => {
+                            const onlineUser = onlineUsers.includes(user._id);
+                            return (
+                                <div
+                                    key={user._id}
+                                    className={`px-4 py-3 rounded-lg my-2 cursor-pointer border border-gray-700 flex justify-between items-center
                                 ${chatUser?._id === user._id ? "bg-gray-700" : "bg-gray-800 hover:bg-gray-700"}`}
-                                onClick={() => handleUserClick(user)}
-                            >
-                                <p className="font-bold text-white">{user.name}</p>
-                                <p className="text-gray-400">@{user.username}</p>
-                            </div>
-                        ))
+                                    onClick={() => handleUserClick(user)}
+                                >
+                                    <div className="flex items-center">
+                                        <img src={user.profilePicture} alt="pfp" className="w-10 h-10 rounded-full flex-shrink-0 cursor-pointer object-cover mr-3 border-2 border-gray-500" />
+                                        <div className="flex flex-col">
+                                            <p className="font-bold text-white">{user.name}</p>
+                                            <p className="text-gray-400">@{user.username}</p>
+                                        </div>
+                                    </div>
+                                    <span className={`text-xs lg:text-sm font-bold ${onlineUser ? 'text-green-600' : 'text-red-600'}`}>
+                                        {onlineUser ? 'online' : 'offline'}
+                                    </span>
+                                </div>
+                            )
+
+                        })
                     ) : (
                         <p>No following Users</p>
                     )}
                 </div>
-            </section>
+            </section >
 
             {/* Chat Section */}
-            <section className="flex-1 flex flex-col">
+            < section className="flex-1 flex flex-col" >
                 {/* Chat Header */}
-                <div className="p-4 border-b border-gray-700 bg-gray-800 flex items-center">
+                < div className="p-4 border-b border-gray-700 bg-gray-800 flex items-center" >
                     {
                         chatUser && <img src={chatUser?.profilePicture} alt=' '
                             className="w-9 h-9 rounded-full flex-shrink-0 cursor-pointer object-cover mr-3 border-2 border-gray-500"
                         />
                     }
                     <h1 className="text-xl font-bold">{chatUser?.name || "Select a user"}</h1>
-                </div>
+                </div >
 
                 {/* Chat Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                < div className="flex-1 overflow-y-auto p-4 space-y-3" >
                     {messages.length > 0 ? (
                         messages.map((msg, index) => (
                             <div key={index} className="flex justify-end">
                                 <p className="bg-blue-500 px-4 py-2 rounded-lg text-white">
-                                    {msg}
+                                    {typeof msg === 'string' ? msg : msg.message}
                                 </p>
                             </div>
                         ))
@@ -94,29 +126,31 @@ const Messages = () => {
                             Start a conversation!
                         </p>
                     )}
-                </div>
+                </div >
 
                 {/* Message Input */}
-                {chatUser && (
-                    <div className="p-4 border-t border-gray-700 bg-gray-800 flex items-center">
-                        <input
-                            type="text"
-                            className="flex-1 px-4 py-2 bg-gray-700 rounded-lg focus:outline-none"
-                            placeholder="Type a message..."
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                        />
-                        <button
-                            className="ml-2 p-2 bg-blue-500 rounded-lg hover:bg-blue-600"
-                            onClick={handleSendMessage}
-                        >
-                            <Send className="w-5 h-5 text-white" />
-                        </button>
-                    </div>
-                )}
-            </section>
-        </div>
+                {
+                    chatUser && (
+                        <div className="p-4 border-t border-gray-700 bg-gray-800 flex items-center">
+                            <input
+                                type="text"
+                                className="flex-1 px-4 py-2 bg-gray-700 rounded-lg focus:outline-none"
+                                placeholder="Type a message..."
+                                value={textMessage}
+                                onChange={(e) => setTextMessage(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && handleSendMessage(chatUser._id)}
+                            />
+                            <button
+                                className="ml-2 p-2 bg-blue-500 rounded-lg hover:bg-blue-600"
+                                onClick={() => handleSendMessage(chatUser._id)}
+                            >
+                                <Send className="w-5 h-5 text-white" />
+                            </button>
+                        </div>
+                    )
+                }
+            </section >
+        </div >
     );
 };
 

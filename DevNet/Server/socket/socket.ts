@@ -14,6 +14,8 @@ const io = new Server(server, {
 
 const userSocketMap: Record<string, string> = {};
 
+export const getRecieverSocketId = (revieverId: string) => userSocketMap[revieverId]
+
 io.on("connection", (socket) => {
     const userId = Array.isArray(socket.handshake.query.id)
         ? socket.handshake.query.id[0]

@@ -1,11 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface OnlineUsersState {
-    onlineUsers: string[];
+interface Message {
+    _id: string;
+    sender: string;
+    receiver: string;
+    message: string;
+    seen: boolean;
+    createdAt: string;
+    updatedAt: string;
 }
 
-const initialState: OnlineUsersState = {
-    onlineUsers: []
+interface ChatState {
+    onlineUsers: string[];
+    messages: Message[];
+}
+
+const initialState: ChatState = {
+    onlineUsers: [],
+    messages: []
 };
 
 const onlineUsersSlice = createSlice({
@@ -14,9 +26,12 @@ const onlineUsersSlice = createSlice({
     reducers: {
         setOnlineUsers: (state, action: PayloadAction<string[]>) => {
             state.onlineUsers = action.payload;
+        },
+        setMessages: (state, action: PayloadAction<Message[]>) => {
+            state.messages = action.payload;
         }
     }
 });
 
-export const { setOnlineUsers } = onlineUsersSlice.actions;
+export const { setOnlineUsers, setMessages } = onlineUsersSlice.actions;
 export default onlineUsersSlice.reducer;

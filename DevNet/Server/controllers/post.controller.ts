@@ -6,6 +6,7 @@ import User from "../models/user.model.ts";
 import Comment from "../models/comment.model.ts";
 import mongoose from "mongoose";
 import { Multer } from "multer";
+import { getRecieverSocketId, io } from "../socket/socket.ts";
 
 interface AuthenticatedRequest extends Request {
     id?: string;
@@ -134,7 +135,19 @@ export const likePost = async (req: AuthenticatedRequest, res: Response) => {
         await post?.save();
 
         //socket.io logic for real-time update
-
+        const user = await User.findById(userId).select('name username profilePicture');
+        const postOwnerId = post?.user.toString();
+        if (postOwnerId !== userId) {
+            const notification = {
+                type: 'like',
+                userId,
+                userDetails: user,
+                postId,
+                message: 'Your post was liked'
+            };
+            const postOwnerSocketId = getRecieverSocketId(postOwnerId!);
+            io.to(postOwnerSocketId).emit('notification', notification);
+        }
         return res.status(200).json({ success: true, message: "Post Liked Successfully" });
 
     } catch (error) {
@@ -152,24 +165,24 @@ export const dislikePost = async (req: AuthenticatedRequest, res: Response) => {
         const { postId } = req.params;
 
         const post = await Post.findById(postId);
-        if (!post) res.status(404).json({ error: "Post not available", success: false });
+        if (!post) {
+            return res.status(404).json({ error: "Post not available", success: false });
+        }
 
-        //post liked logic
-        await post?.updateOne({ $pull: { likes: userId } });
-        await post?.save();
-
-        //socket.io logic for real-time update
+        // Remove like from the post
+        await post.updateOne({ $pull: { likes: userId } });
 
         return res.status(200).json({ success: true, message: "Post Disliked Successfully" });
 
     } catch (error) {
-        console.log("DsiLike Post Internal Error", error);
+        console.log("Dislike Post Internal Error", error);
         return res.status(500).json({
-            error: "DisLike Post Internal Error",
+            error: "Dislike Post Internal Error",
             success: false
-        })
+        });
     }
 };
+
 
 export const addComments = async (req: AuthenticatedRequest, res: Response) => {
     try {
