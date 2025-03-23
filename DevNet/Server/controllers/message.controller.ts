@@ -74,6 +74,16 @@ export const getMessages = async (req: AuthenticatedRequest, res: Response) => {
         const userId = req.id;
         const { receiverId } = req.params;
 
+        // Add validation
+        if (!receiverId) {
+            return res.status(400).json({
+                error: "Receiver ID is required",
+                success: false
+            });
+        }
+
+        console.log("Getting messages between", userId, "and", receiverId);
+
         const conversation = await Conversation.findOne({
             participants: { $all: [userId, receiverId] }
         }).populate('messages');
@@ -84,6 +94,8 @@ export const getMessages = async (req: AuthenticatedRequest, res: Response) => {
                 messages: []
             });
         }
+
+        console.log("Found messages:", conversation.messages);
 
         return res.status(200).json({
             success: true,

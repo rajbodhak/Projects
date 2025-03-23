@@ -5,6 +5,6 @@ import isAuthenticated from "../middlewares/isAuthenticated.ts";
 const router = express.Router();
 
 router.post("/send/:receiverId", isAuthenticated, sendMessage);
-router.get("/get/:id", isAuthenticated, getMessages);
+router.get("/get/:receiverId", isAuthenticated, getMessages);
 
 export default router;

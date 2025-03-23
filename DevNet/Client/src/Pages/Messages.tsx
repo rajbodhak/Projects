@@ -37,6 +37,39 @@ const Messages = () => {
         // setMessage("");
     };
 
+    useEffect(() => {
+        if (!chatUser?._id) {
+            // Clear messages if no chat user is selected
+            dispatch(setMessages([]));
+            return;
+        }
+
+        const fetchMessages = async () => {
+            try {
+                console.log("Fetching messages for user:", chatUser._id);
+                const response = await axios.get(
+                    `http://localhost:8000/api/message/get/${chatUser._id}`,
+                    { withCredentials: true }
+                );
+
+                if (response.data.success) {
+                    dispatch(setMessages(response.data.messages));
+                }
+            } catch (error) {
+                console.log("Message fetching error", error);
+            }
+        };
+
+        fetchMessages();
+    }, [chatUser, dispatch]);
+
+    // Existing effect for cleanup
+    useEffect(() => {
+        return () => {
+            dispatch(setChatUser(null))
+        }
+    }, [])
+
     const handleSendMessage = async (receiverId: string) => {
         // console.log("Sending message to:", receiverId);
         try {
