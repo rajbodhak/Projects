@@ -157,7 +157,7 @@ const Messages = () => {
                     {messages.length > 0 ? (
                         messages.map((msg, index) => (
                             <div key={index} className={`flex ${msg.sender === user?._id ? 'justify-end' : 'justify-start'}`}>
-                                <p className="bg-blue-500 pl-3 pr-1 py-2 rounded-lg text-white">
+                                <p className={`${msg.sender === user?._id ? 'bg-green-600' : 'bg-gray-600'} pl-3 pr-1 py-2 rounded-lg text-white`}>
                                     {typeof msg === 'string' ? msg : msg.message}
                                     <span className="ml-4 text-xs bottom-1 right-1">{formatTime(msg.createdAt)}</span>
                                 </p>

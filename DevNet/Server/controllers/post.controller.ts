@@ -172,6 +172,20 @@ export const dislikePost = async (req: AuthenticatedRequest, res: Response) => {
         // Remove like from the post
         await post.updateOne({ $pull: { likes: userId } });
 
+        //socket.io logic for real-time update
+        const user = await User.findById(userId).select('name username profilePicture');
+        const postOwnerId = post?.user.toString();
+        if (postOwnerId !== userId) {
+            const notification = {
+                type: 'dislike',
+                userId,
+                userDetails: user,
+                postId,
+                message: 'Your post was Disliked'
+            };
+            const postOwnerSocketId = getRecieverSocketId(postOwnerId!);
+            io.to(postOwnerSocketId).emit('notification', notification);
+        }
         return res.status(200).json({ success: true, message: "Post Disliked Successfully" });
 
     } catch (error) {

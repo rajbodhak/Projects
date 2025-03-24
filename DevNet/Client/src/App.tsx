@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { setSocketConnected, setSocketId } from './redux/socketSlice';
 import socketService from './services/socketService'
 import { setOnlineUsers } from './redux/chatSlice';
+import { setLikeNotifications } from './redux/rtnSlice.ts';
 
 const browserRouter = createBrowserRouter([
   // Public routes
@@ -68,9 +69,14 @@ function App() {
 
       // Handle online users if needed in your app
       socket.on('getOnlineUsers', (onlineUsers) => {
-        // Dispatch to Redux if you need to track this
+        // Dispatch to Redux
         dispatch(setOnlineUsers(onlineUsers));
       });
+
+      //Handle Real Time Notification
+      socket.on('notification', (notification) => {
+        dispatch(setLikeNotifications(notification))
+      })
 
       // Clean up on unmount
       return () => {
