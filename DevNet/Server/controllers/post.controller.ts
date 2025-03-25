@@ -128,26 +128,31 @@ export const likePost = async (req: AuthenticatedRequest, res: Response) => {
         const { postId } = req.params;
 
         const post = await Post.findById(postId);
-        if (!post) res.status(404).json({ error: "Post not available", success: false });
-
-        //post liked logic
-        await post?.updateOne({ $addToSet: { likes: userId } });
-        await post?.save();
-
-        //socket.io logic for real-time update
-        const user = await User.findById(userId).select('name username profilePicture');
-        const postOwnerId = post?.user.toString();
-        if (postOwnerId !== userId) {
-            const notification = {
-                type: 'like',
-                userId,
-                userDetails: user,
-                postId,
-                message: 'Your post was liked'
-            };
-            const postOwnerSocketId = getRecieverSocketId(postOwnerId!);
-            io.to(postOwnerSocketId).emit('notification', notification);
+        if (!post) {
+            return res.status(404).json({ error: "Post not available", success: false });
         }
+
+        // Post like logic
+        await post.updateOne({ $addToSet: { likes: userId } });
+
+        // Socket.io logic for real-time update
+        const user = await User.findById(userId).select('name username profilePicture');
+        const postOwnerId = post.user ? post.user.toString() : null;
+
+        if (postOwnerId && postOwnerId !== userId) {
+            const postOwnerSocketId = getRecieverSocketId(postOwnerId);
+            if (postOwnerSocketId) {
+                const notification = {
+                    type: 'like',
+                    userId,
+                    userDetails: user,
+                    postId,
+                    message: 'Your post was liked'
+                };
+                io.to(postOwnerSocketId).emit('notification', notification);
+            }
+        }
+
         return res.status(200).json({ success: true, message: "Post Liked Successfully" });
 
     } catch (error) {
@@ -155,9 +160,10 @@ export const likePost = async (req: AuthenticatedRequest, res: Response) => {
         return res.status(500).json({
             error: "Like Post Internal Error",
             success: false
-        })
+        });
     }
 };
+
 
 export const dislikePost = async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -172,20 +178,24 @@ export const dislikePost = async (req: AuthenticatedRequest, res: Response) => {
         // Remove like from the post
         await post.updateOne({ $pull: { likes: userId } });
 
-        //socket.io logic for real-time update
+        // Socket.io logic for real-time update
         const user = await User.findById(userId).select('name username profilePicture');
-        const postOwnerId = post?.user.toString();
-        if (postOwnerId !== userId) {
-            const notification = {
-                type: 'dislike',
-                userId,
-                userDetails: user,
-                postId,
-                message: 'Your post was Disliked'
-            };
-            const postOwnerSocketId = getRecieverSocketId(postOwnerId!);
-            io.to(postOwnerSocketId).emit('notification', notification);
+        const postOwnerId = post?.user ? post.user.toString() : null;
+
+        if (postOwnerId && postOwnerId !== userId) {
+            const postOwnerSocketId = getRecieverSocketId(postOwnerId);
+            if (postOwnerSocketId) {
+                const notification = {
+                    type: 'dislike',
+                    userId,
+                    userDetails: user,
+                    postId,
+                    message: 'Your post was Disliked'
+                };
+                io.to(postOwnerSocketId).emit('notification', notification);
+            }
         }
+
         return res.status(200).json({ success: true, message: "Post Disliked Successfully" });
 
     } catch (error) {
@@ -196,6 +206,7 @@ export const dislikePost = async (req: AuthenticatedRequest, res: Response) => {
         });
     }
 };
+
 
 
 export const addComments = async (req: AuthenticatedRequest, res: Response) => {

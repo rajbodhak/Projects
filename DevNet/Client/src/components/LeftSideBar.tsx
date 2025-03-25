@@ -8,6 +8,7 @@ const LeftSideBar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const user = useSelector((state: Rootstate) => state.auth.user);
+    const { likeNotifications } = useSelector((state: Rootstate) => state.realTimeNotification);
 
     const sideBarItems = [
         { icon: <Home />, itemName: "Home", path: "/home" },
@@ -43,6 +44,13 @@ const LeftSideBar = () => {
                                 {item.icon}
                             </div>
                             <span className="font-medium hidden md:inline">{item.itemName}</span>
+                            {
+                                item.itemName === 'Notifications' && likeNotifications.length > 0 && (
+                                    <div className="ml-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                        {likeNotifications.length}
+                                    </div>
+                                )
+                            }
                         </div>
                     );
                 })}

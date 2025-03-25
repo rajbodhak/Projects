@@ -75,7 +75,7 @@ function App() {
 
       //Handle Real Time Notification
       socket.on('notification', (notification) => {
-        dispatch(setLikeNotifications(notification))
+        dispatch(setLikeNotifications([notification]))
       })
 
       // Clean up on unmount
