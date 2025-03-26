@@ -1,14 +1,15 @@
 import { Home, Search, Bell, Mail, Bookmark, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Rootstate } from "@/redux/store";
+import { markAllNotificationsAsRead } from "@/redux/rtnSlice";
 
 const LeftSideBar = () => {
-
     const location = useLocation();
     const navigate = useNavigate();
     const user = useSelector((state: Rootstate) => state.auth.user);
     const { notifications } = useSelector((state: Rootstate) => state.realTimeNotification);
+    const dispatch = useDispatch();
 
     const sideBarItems = [
         { icon: <Home />, itemName: "Home", path: "/home" },
@@ -20,8 +21,14 @@ const LeftSideBar = () => {
     ];
 
     const sidebarItemHandler = (path: string) => {
+        if (path === "/notifications") {
+            dispatch(markAllNotificationsAsRead())
+        }
         navigate(path);
     };
+
+    // Count of unread notifications
+    const unreadNotificationsCount = notifications.filter(notification => !notification.isRead).length;
 
     return (
         <div className="fixed top-0 left-0 z-10 w-[20%] h-screen bg-white border-r border-gray-200 shadow-md">
@@ -45,9 +52,9 @@ const LeftSideBar = () => {
                             </div>
                             <span className="font-medium hidden md:inline">{item.itemName}</span>
                             {
-                                item.itemName === 'Notifications' && notifications.length > 0 && (
+                                item.itemName === 'Notifications' && unreadNotificationsCount > 0 && (
                                     <div className="ml-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                                        {notifications.filter(notification => !notification.isRead).length}
+                                        {unreadNotificationsCount}
                                     </div>
                                 )
                             }

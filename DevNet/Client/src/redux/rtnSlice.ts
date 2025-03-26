@@ -27,6 +27,13 @@ const notificationSlice = createSlice({
                 state.notifications.unshift(action.payload);
             }
         },
+        markAllNotificationsAsRead: (state) => {
+            // Mark all notifications as read when navigating to notifications page
+            state.notifications = state.notifications.map(notification => ({
+                ...notification,
+                isRead: true
+            }));
+        },
         markNotificationAsRead: (state, action: PayloadAction<string>) => {
             const notification = state.notifications.find(n => n._id.toString() === action.payload);
             if (notification) {
@@ -47,6 +54,7 @@ const notificationSlice = createSlice({
 export const {
     setLikeNotifications,
     addNotification,
+    markAllNotificationsAsRead,
     markNotificationAsRead,
     removeNotification,
     clearAllNotifications
