@@ -1,28 +1,54 @@
-// AuthGuard.jsx with more debugging
-import { Navigate, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { Rootstate } from "@/redux/store";
+import { ReactNode } from 'react';
+import { useSelector } from 'react-redux';
+import { Rootstate } from '@/redux/store';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
-console.log("AuthGuard module loaded"); // This will log when the file is imported
+interface AuthGuardProps {
+    children: ReactNode;
+}
 
-const AuthGuard = () => {
-    console.log("AuthGuard is rendering");
+const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
+    const { user } = useSelector((state: Rootstate) => state.auth);
+    const location = useLocation();
+    const [isTokenValid, setIsTokenValid] = useState<boolean | null>(null);
 
-    // Get the user from Redux
-    const authUser = useSelector((state: Rootstate) => state.auth.user);
-    console.log("AuthGuard - Current authUser:", authUser);
+    useEffect(() => {
+        const validateToken = async () => {
+            if (user) {
+                try {
+                    const response = await axios.get('http://localhost:8000/api/users/validate-token', {
+                        withCredentials: true
+                    });
+                    setIsTokenValid(response.data.valid);
+                } catch (error) {
+                    setIsTokenValid(false);
+                }
+            } else {
+                setIsTokenValid(false);
+            }
+        };
 
-    // Add more explicit authentication check
-    const isAuthenticated = Boolean(authUser && authUser._id);
-    console.log("Is authenticated:", isAuthenticated);
+        validateToken();
+    }, [user]);
 
-    if (!isAuthenticated) {
-        console.log("Not authenticated, redirecting to login");
-        return <Navigate to="/login" replace />;
+    // If token validation is not complete, you might want to show a loading state
+    if (isTokenValid === null) {
+        return <div>Loading...</div>;
     }
 
-    console.log("User is authenticated, rendering protected content");
-    return <Outlet />;
-};
+    // If no valid token, redirect to login
+    if (!isTokenValid) {
+        return <Navigate
+            to="/login"
+            state={{ from: location }}
+            replace
+        />;
+    }
+
+    // If user exists and token is valid, render children
+    return <>{children}</>;
+}
 
 export default AuthGuard;

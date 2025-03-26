@@ -8,6 +8,51 @@ import getDataUri from "../utils/datauri.ts";
 import { UploadApiResponse } from "cloudinary"
 import mongoose from "mongoose";
 
+export const validateToken = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
+    try {
+        // If the request reaches this point, it means the token is valid 
+        // (because the isAuthenticated middleware has already processed it)
+        if (!req.id) {
+            return res.status(401).json({
+                valid: false,
+                error: "Invalid token",
+                success: false
+            });
+        }
+
+        // Fetch user details (optional, but can be useful)
+        const user = await User.findById(req.id).select("-password");
+
+        if (!user) {
+            return res.status(401).json({
+                valid: false,
+                error: "User not found",
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            valid: true,
+            user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                name: user.name,
+                profilePicture: user.profilePicture
+            },
+            success: true
+        });
+
+    } catch (error) {
+        console.error("Token validation error:", error);
+        return res.status(500).json({
+            valid: false,
+            error: "Token validation failed",
+            success: false
+        });
+    }
+};
+
 export const register = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { username, email, password, name } = req.body;

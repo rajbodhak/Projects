@@ -4,14 +4,28 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import MainLayout from './components/MainLayout';
 import Home from './Pages/Home';
-import { Bookmarks, Messages, Notifications, Profile, Search, Setting, UserProfile } from './Pages/pages.ts'
+import {
+  Bookmarks,
+  Messages,
+  Notifications,
+  Profile,
+  Search,
+  Setting,
+  UserProfile
+} from './Pages/pages.ts';
 import { useDispatch, useSelector } from 'react-redux';
 import { Rootstate } from './redux/store';
 import { useEffect } from 'react';
 import { setSocketConnected, setSocketId } from './redux/socketSlice';
-import socketService from './services/socketService'
+import socketService from './services/socketService';
 import { setOnlineUsers } from './redux/chatSlice';
 import { setLikeNotifications } from './redux/rtnSlice.ts';
+
+const createProtectedRoute = (element: React.ReactNode) => (
+  <AuthGuard>
+    {element}
+  </AuthGuard>
+);
 
 const browserRouter = createBrowserRouter([
   // Public routes
@@ -23,28 +37,47 @@ const browserRouter = createBrowserRouter([
     path: '/login',
     element: <Login />,
   },
-  // Protected routes
+  // Protected routes wrapped inside AuthGuard
   {
     path: '/',
-    element: <AuthGuard />,
+    element: createProtectedRoute(<MainLayout />),
     children: [
       {
-        element: <MainLayout />,
-        children: [
-          {
-            index: true,
-            element: <Navigate to="/home" replace />,
-          },
-          { path: 'home', element: <Home /> }, // Note: removed leading slash
-          { path: ':id', element: <UserProfile /> },
-          { path: 'search', element: <Search /> },
-          { path: 'notifications', element: <Notifications /> },
-          { path: 'messages', element: <Messages /> },
-          { path: 'bookmarks', element: <Bookmarks /> },
-          { path: 'profile', element: <Profile /> },
-          { path: 'settings', element: <Setting /> }
-        ],
+        index: true,
+        element: <Navigate to="/home" replace />,
       },
+      {
+        path: 'home',
+        element: createProtectedRoute(<Home />)
+      },
+      {
+        path: ':id',
+        element: createProtectedRoute(<UserProfile />)
+      },
+      {
+        path: 'search',
+        element: createProtectedRoute(<Search />)
+      },
+      {
+        path: 'notifications',
+        element: createProtectedRoute(<Notifications />)
+      },
+      {
+        path: 'messages',
+        element: createProtectedRoute(<Messages />)
+      },
+      {
+        path: 'bookmarks',
+        element: createProtectedRoute(<Bookmarks />)
+      },
+      {
+        path: 'profile',
+        element: createProtectedRoute(<Profile />)
+      },
+      {
+        path: 'settings',
+        element: createProtectedRoute(<Setting />)
+      }
     ],
   },
 ]);
@@ -67,18 +100,17 @@ function App() {
         dispatch(setSocketId(null));
       });
 
-      // Handle online users if needed in your app
+      // Handle online users
       socket.on('getOnlineUsers', (onlineUsers) => {
-        // Dispatch to Redux
         dispatch(setOnlineUsers(onlineUsers));
       });
 
-      //Handle Real Time Notification
+      // Handle Real-Time Notification
       socket.on('notification', (notification) => {
-        dispatch(setLikeNotifications([notification]))
-      })
+        dispatch(setLikeNotifications([notification]));
+      });
 
-      // Clean up on unmount
+      // Cleanup on unmount
       return () => {
         socketService.disconnect();
       };

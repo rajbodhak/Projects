@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import { setAuthUser } from "@/redux/authSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface PostCardProps {
     post: Post;
@@ -120,6 +121,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
 
                 // Update Redux state with the new user data
                 dispatch(setAuthUser(updatedUser));
+                toast.success(response.data.message)
             }
         } catch (error) {
             console.log("Bookmark toggling error", error);

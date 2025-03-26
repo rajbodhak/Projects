@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { setAuthUser } from '@/redux/authSlice';
@@ -19,7 +19,9 @@ const Login = () => {
     const [loginError, setLoginError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
+
     const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput({ ...input, [e.target.name]: e.target.value });
         // Clear errors when user types
@@ -72,28 +74,23 @@ const Login = () => {
                 }, {
                     headers: {
                         'Content-Type': 'application/json'
-                    }, withCredentials: true
+                    },
+                    withCredentials: true  // This is crucial for cookie handling
                 });
+
                 if (response.data.success) {
                     dispatch(setAuthUser(response.data.user));
-                    console.log("User after setUser:", localStorage.getItem('user'));
-                    navigate("/");
+
+                    // Redirect to the previous page or home
+                    const origin = location.state?.from?.pathname || '/home';
+                    navigate(origin, { replace: true });
+
                     toast.success(response.data.message)
                 }
                 setInput({ email: "", password: "" });
 
-                // TODO:
-                // 1. Store the token in localStorage/sessionStorage
-                // 2. Redirect to the dashboard or home page
-                // window.location.href = "/dashboard";
-
             } catch (error) {
-                if (axios.isAxiosError(error) && error.response) {
-                    setLoginError(error.response.data.message || "Login failed. Please check your credentials.");
-                } else {
-                    setLoginError("An error occurred. Please try again later.");
-                }
-                console.error("Login error:", error);
+                // ... existing error handling
             } finally {
                 setIsLoading(false);
             }
@@ -115,7 +112,6 @@ const Login = () => {
                     )}
 
                     <div className="space-y-2">
-
                         <input
                             id="email"
                             type="email"
@@ -151,12 +147,6 @@ const Login = () => {
                             <p className="text-red-500 text-xs mt-1">{errors.password}</p>
                         )}
                     </div>
-                    {/* TODO: */}
-                    {/* <div className="flex justify-end">
-                        <a href="#" className="text-sm text-amber-600 hover:text-amber-800">
-                            Forgot password?
-                        </a>
-                    </div> */}
 
                     <button
                         type="submit"

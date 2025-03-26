@@ -9,11 +9,12 @@ import {
     followOrUnfollow,
     getFollowStatus,
     getProfile,
-    getFollowingUsers
+    getFollowingUsers,
+    validateToken
 } from "../controllers/user.controller.ts";
 import isAuthenticated from "../middlewares/isAuthenticated.ts";
 import upload from "../utils/multer.ts";
-// console.log("Imported upload object:", typeof upload, upload);
+
 const router = express.Router();
 
 router.post("/register", register);
@@ -26,4 +27,6 @@ router.put("/profile/edit", isAuthenticated, upload.single("profilePicture"), ed
 router.post("/follow/:followId", isAuthenticated, followOrUnfollow);
 router.get("/following", isAuthenticated, getFollowingUsers)
 router.get('/follow-status/:followId', isAuthenticated, getFollowStatus);
-export default router
+router.get('/validate-token', isAuthenticated, validateToken);
+
+export default router;

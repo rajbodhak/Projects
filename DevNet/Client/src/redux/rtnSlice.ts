@@ -1,56 +1,54 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User } from "@/lib/types";
-
-interface Notification {
-    type: string;
-    userId: string;
-    userDetails: User;
-    postId: string;
-    message: string;
-    createdAt?: Date;
-}
+import { INotification } from "@/lib/types";
 
 interface NotificationState {
-    likeNotifications: Notification[];
+    notifications: INotification[];
 }
 
 const initialState: NotificationState = {
-    likeNotifications: [],
+    notifications: [],
 }
 
-const rtnSlice = createSlice({
-    name: 'realTimeNotification',
+const notificationSlice = createSlice({
+    name: 'notifications',
     initialState,
     reducers: {
-        setLikeNotifications: (state, action: PayloadAction<Notification[]>) => {
-            action.payload.forEach(notification => {
-                if (notification.type === 'like') {
-                    // Add timestamp if not present
-                    const notificationWithTime = {
-                        ...notification,
-                        createdAt: notification.createdAt || new Date(),
-                    };
-                    state.likeNotifications.push(notificationWithTime);
-                } else if (notification.type === 'dislike') {
-                    // Remove notification with matching userId and postId
-                    state.likeNotifications = state.likeNotifications.filter(
-                        item => !(item.userId === notification.userId && item.postId === notification.postId)
-                    );
-                }
-            });
+        setLikeNotifications: (state, action: PayloadAction<INotification[]>) => {
+            state.notifications = action.payload;
         },
-        clearNotification: (state, action: PayloadAction<Notification>) => {
-            // Remove the specific notification when clicked
-            state.likeNotifications = state.likeNotifications.filter(
-                item => !(item.userId === action.payload.userId &&
-                    item.postId === action.payload.postId)
+        addNotification: (state, action: PayloadAction<INotification>) => {
+            // Prevent duplicate notifications
+            const exists = state.notifications.some(
+                n => n.user.toString() === action.payload.user.toString() &&
+                    n.message === action.payload.message
+            );
+
+            if (!exists) {
+                state.notifications.unshift(action.payload);
+            }
+        },
+        markNotificationAsRead: (state, action: PayloadAction<string>) => {
+            const notification = state.notifications.find(n => n._id.toString() === action.payload);
+            if (notification) {
+                notification.isRead = true;
+            }
+        },
+        removeNotification: (state, action: PayloadAction<string>) => {
+            state.notifications = state.notifications.filter(
+                n => n._id.toString() !== action.payload
             );
         },
         clearAllNotifications: (state) => {
-            state.likeNotifications = [];
+            state.notifications = [];
         }
     }
 });
 
-export const { setLikeNotifications, clearNotification, clearAllNotifications } = rtnSlice.actions;
-export default rtnSlice.reducer;
+export const {
+    setLikeNotifications,
+    addNotification,
+    markNotificationAsRead,
+    removeNotification,
+    clearAllNotifications
+} = notificationSlice.actions;
+export default notificationSlice.reducer;

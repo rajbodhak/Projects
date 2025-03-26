@@ -8,6 +8,15 @@
 //     createdAt
 
 // }
+export interface INotification {
+    _id: string;
+    user: string;
+    types: string;
+    message: string;
+    isRead: boolean;
+    createdAt: Date | string;
+    updatedAt: Date | string;
+}
 
 export interface User {
     _id: string;
@@ -38,7 +47,7 @@ export interface Post {
     };
     likes: string[];
     comments: Comment[];
-};
+}
 
 export interface Comment {
     _id: string;
