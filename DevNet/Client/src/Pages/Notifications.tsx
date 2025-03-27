@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Rootstate } from '@/redux/store';
 import {
     markNotificationAsRead,
-    removeNotification
 } from '@/redux/rtnSlice';
 import { useNavigate } from 'react-router-dom';
 import { INotification } from '@/lib/types';
