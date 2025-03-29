@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
 interface AutoCompleteInputProps {
-    staticData?: string[];
     fetchSuggestions: (value: string) => Promise<string[]>;
     placeholder: string;
     customLoading: string;
@@ -13,12 +12,10 @@ interface AutoCompleteInputProps {
 }
 
 const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({
-    staticData,
     placeholder,
     onBlur,
     onSelect,
     onChange,
-    customLoading,
     customStyles,
     fetchSuggestions
 }) => {
@@ -38,14 +35,9 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({
 
         try {
             let result;
-            if (staticData) {
-                result = staticData.filter((item) => {
-                    return item.toLowerCase().includes(query.toLowerCase());
-                })
-            } else if (fetchSuggestions) {
+            if (fetchSuggestions) {
                 result = await fetchSuggestions(query)
             }
-
             setSuggestionData(result)
         } catch (error) {
             setError("Failed to Fetch Suggestions");
@@ -64,7 +56,7 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({
                 onBlur={onBlur}
                 onSelect={onSelect}
                 onChange={handleInputChange}
-                className={customStyles}
+                className={`w-full py-3 px-4 text-base outline-none transition-all duration-200 bg-white placeholder-gray-400 text-gray-800 rounded-lg focus:ring-2 focus:ring-blue-500 ${customStyles}`}
             />
         </div>
     )
