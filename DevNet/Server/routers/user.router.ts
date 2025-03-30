@@ -10,7 +10,8 @@ import {
     getFollowStatus,
     getProfile,
     getFollowingUsers,
-    validateToken
+    validateToken,
+    searchUsers
 } from "../controllers/user.controller.ts";
 import isAuthenticated from "../middlewares/isAuthenticated.ts";
 import upload from "../utils/multer.ts";
@@ -28,5 +29,6 @@ router.post("/follow/:followId", isAuthenticated, followOrUnfollow);
 router.get("/following", isAuthenticated, getFollowingUsers)
 router.get('/follow-status/:followId', isAuthenticated, getFollowStatus);
 router.get('/validate-token', isAuthenticated, validateToken);
+router.get('/search', isAuthenticated, searchUsers)
 
 export default router;

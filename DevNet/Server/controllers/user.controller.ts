@@ -221,7 +221,46 @@ export const getuser = async (req: Request, res: Response): Promise<Response> =>
 interface AuthenticatedRequest extends Request {
     id?: string;
     file?: Express.Multer.File;
-}
+};
+
+// Add this function to your existing user.model.ts file
+
+export const searchUsers = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const { query } = req.query;
+
+        if (!query || typeof query !== 'string') {
+            return res.status(400).json({
+                error: "Search query is required",
+                success: false
+            });
+        }
+
+        // Limit results to 10 users by default, or use the provided limit
+        const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+
+        // Search by name or username using regex for partial matching
+        const users = await User.find({
+            $or: [
+                { username: { $regex: query, $options: "i" } },
+                { name: { $regex: query, $options: "i" } }
+            ]
+        })
+            .select("username name profilePicture bio skills") // Only return necessary fields
+            .limit(limit);
+
+        return res.status(200).json({
+            users,
+            success: true
+        });
+    } catch (error) {
+        console.error("User search error:", error);
+        return res.status(500).json({
+            error: "An error occurred while searching for users",
+            success: false
+        });
+    }
+};
 
 export const getProfile = async (req: AuthenticatedRequest, res: Response) => {
     try {
