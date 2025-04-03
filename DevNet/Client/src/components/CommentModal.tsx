@@ -5,6 +5,7 @@ import { Comment } from "@/lib/types";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "@/lib/apiConfig";
 
 interface CommentModalProps {
     isOpen: boolean;
@@ -58,7 +59,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({ isOpen, onClose, pos
         setLoading(true);
         try {
             const response = await axios.post(
-                `/api/posts/comment/${postId}`,
+                `${API_BASE_URL}/api/posts/comment/${postId}`,
                 { text: commentText },
                 { withCredentials: true }
             );

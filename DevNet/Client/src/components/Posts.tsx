@@ -2,7 +2,7 @@ import PostCard from "./PostCard";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Post } from "@/lib/types";
-
+import { API_BASE_URL } from "@/lib/apiConfig";
 const Posts = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -11,7 +11,7 @@ const Posts = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/posts/', { withCredentials: true });
+                const response = await axios.get(`${API_BASE_URL}/api/posts/`, { withCredentials: true });
 
                 // Log the specific array you're trying to set
                 // console.log("Posts array to set:", response.data.posts);

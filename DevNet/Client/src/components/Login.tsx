@@ -5,6 +5,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { setAuthUser } from '@/redux/authSlice';
+import { API_BASE_URL } from '@/lib/apiConfig';
 
 const Login = () => {
     const [input, setInput] = useState({
@@ -67,18 +68,30 @@ const Login = () => {
             setIsLoading(true);
             setLoginError("");
 
+            // const backendUrl = window.location.hostname === 'localhost'
+            //     ? 'http://localhost:8000'
+            //     : `http://${window.location.hostname}:8000`;
+
             try {
-                const response = await axios.post("http://localhost:8000/api/users/login", {
+                console.log(`Making request to: ${API_BASE_URL}/api/users/login`);
+                console.log('Request options:', {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const response = await axios.post(`${API_BASE_URL}/api/users/login`, {
                     email: input.email,
                     password: input.password
                 }, {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    withCredentials: true  // This is crucial for cookie handling
+                    withCredentials: true
                 });
 
                 if (response.data.success) {
+                    localStorage.setItem('token', response.data.token);
                     dispatch(setAuthUser(response.data.user));
 
                     // Redirect to the previous page or home
@@ -90,7 +103,7 @@ const Login = () => {
                 setInput({ email: "", password: "" });
 
             } catch (error) {
-                // ... existing error handling
+                console.log("Login Error: ", error)
             } finally {
                 setIsLoading(false);
             }

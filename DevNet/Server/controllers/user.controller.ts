@@ -147,24 +147,28 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
             process.env.JWT_SECRET as string,
             { expiresIn: '1d' }
         );
+        console.log("Token generated successfully:", !!token);
 
         const cookieOptions: {
             httpOnly: boolean;
-            sameSite: "strict";
+            sameSite: "lax";
             maxAge: number;
             secure: boolean;
         } = {
             httpOnly: true,
-            sameSite: "strict",
+            sameSite: "lax",
             maxAge: 24 * 60 * 60 * 1000,
-            secure: process.env.NODE_ENV === 'production'
+            secure: process.env.NODE_ENV === 'production',
         };
+        console.log("Login request received from:", req.headers.origin);
+        console.log("Setting cookie with options:", cookieOptions);
 
         return res
             .cookie("token", token, cookieOptions)
             .json({
                 message: `Welcome back, ${user.username}!`,
                 user: userData,
+                token: token,
                 success: true
             });
 

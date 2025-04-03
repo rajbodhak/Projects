@@ -5,7 +5,7 @@ import ProfileEdit from "@/components/ProfileEdit";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
-
+import { API_BASE_URL } from "@/lib/apiConfig";
 const Profile = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ const Profile = () => {
             try {
                 setLoading(true);
                 const response = await axios.get(
-                    `http://localhost:8000/api/users/user/${user._id}`,
+                    `${API_BASE_URL}/api/users/user/${user._id}`,
                     { withCredentials: true }
                 );
                 console.log(response);

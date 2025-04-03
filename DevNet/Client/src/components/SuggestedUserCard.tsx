@@ -1,7 +1,7 @@
 import { User } from '@/lib/types';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-
+import { API_BASE_URL } from '@/lib/apiConfig';
 interface SuggestedUserCardProps {
   userinfo: User;
 }
@@ -40,7 +40,7 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/users/follow/${userinfo._id}`,
+        `${API_BASE_URL}/api/users/follow/${userinfo._id}`,
         {},
         {
           withCredentials: true

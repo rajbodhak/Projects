@@ -3,6 +3,7 @@ import { ImageIcon, XCircle } from "lucide-react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
+import { API_BASE_URL } from "@/lib/apiConfig";
 
 const CreatePost = () => {
     const [content, setContent] = useState('');
@@ -34,7 +35,7 @@ const CreatePost = () => {
             if (image) formData.append("image", image);
 
             // Using relative URL instead of absolute URL
-            const response = await axios.post("/api/posts/add-post", formData, { withCredentials: true });
+            const response = await axios.post(`${API_BASE_URL}/api/posts/add-post`, formData, { withCredentials: true });
 
             if (response.data.success) {
                 console.log("Post created successfully");

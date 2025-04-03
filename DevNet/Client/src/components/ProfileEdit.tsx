@@ -3,7 +3,7 @@ import { User } from "@/lib/types";
 import axios from 'axios';
 import { Focus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
+import { API_BASE_URL } from '@/lib/apiConfig';
 interface ProfileDetailsProps {
     userinfo: User;
     onUpdate: (user: User) => void;
@@ -57,7 +57,7 @@ const ProfileEdit = ({ userinfo, onUpdate, onCancel }: ProfileDetailsProps) => {
             }
 
             const response = await axios.put(
-                "http://localhost:8000/api/users/profile/edit",
+                `${API_BASE_URL}/api/users/profile/edit`,
                 formdata,
                 {
                     headers: {

@@ -3,6 +3,7 @@ import { Rootstate } from '@/redux/store';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { API_BASE_URL } from '@/lib/apiConfig';
 
 const useGetMessages = () => {
     const dispatch = useDispatch();
@@ -18,7 +19,7 @@ const useGetMessages = () => {
             try {
                 console.log("Hook: Fetching messages for user:", chatUser._id);
                 const response = await axios.get(
-                    `http://localhost:8000/api/message/get/${chatUser._id}`,
+                    `${API_BASE_URL}/api/message/get/${chatUser._id}`,
                     { withCredentials: true }
                 );
 

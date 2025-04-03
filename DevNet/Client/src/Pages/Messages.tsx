@@ -8,7 +8,7 @@ import { Send } from "lucide-react";
 import { setMessages } from "@/redux/chatSlice";
 import useGetMessages from "@/hooks/useGetMessages";
 import useGetRTM from "@/hooks/useGetRTM";
-
+import { API_BASE_URL } from "@/lib/apiConfig";
 const Messages = () => {
     const [followingUsers, setFollowingUsers] = useState<User[]>([]);
     const [textMessage, setTextMessage] = useState("");
@@ -22,7 +22,7 @@ const Messages = () => {
     useEffect(() => {
         const fetchFollowingUsers = async () => {
             try {
-                const response = await axios.get("/api/users/following", { withCredentials: true });
+                const response = await axios.get(`${API_BASE_URL}/api/users/following`, { withCredentials: true });
                 if (response.data.success) {
                     setFollowingUsers(response.data.following);
                 }
@@ -45,7 +45,7 @@ const Messages = () => {
 
         const fetchMessages = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/message/get/${chatUser._id}`, { withCredentials: true });
+                const response = await axios.get(`${API_BASE_URL}/api/message/get/${chatUser._id}`, { withCredentials: true });
                 if (response.data.success) {
                     dispatch(setMessages(response.data.messages));
                 }
@@ -67,7 +67,7 @@ const Messages = () => {
 
         try {
             const response = await axios.post(
-                `http://localhost:8000/api/message/send/${receiverId}`,
+                `${API_BASE_URL}/api/message/send/${receiverId}`,
                 { textMessage },
                 { headers: { "Content-Type": "application/json" }, withCredentials: true }
             );

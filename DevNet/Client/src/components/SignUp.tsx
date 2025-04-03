@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
-
+import { API_BASE_URL } from '@/lib/apiConfig';
 const SignUp = () => {
     const [input, setInput] = useState({
         username: "",
@@ -70,7 +70,7 @@ const SignUp = () => {
         if (validateForm()) {
             setIsLoading(true);
             try {
-                const response = await axios.post("http://localhost:8000/api/users/register", {
+                const response = await axios.post(`${API_BASE_URL}/api/users/register`, {
                     username: input.username,
                     email: input.email,
                     password: input.password

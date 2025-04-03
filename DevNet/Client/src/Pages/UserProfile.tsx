@@ -7,7 +7,7 @@ import PostCard from '@/components/PostCard';
 import { Post } from '@/lib/types';
 import { Grid3x3, Settings, ExternalLink } from 'lucide-react';
 import useGetProfileById from '@/hooks/useGetProfileById';
-
+import { API_BASE_URL } from '@/lib/apiConfig';
 const UserProfile = () => {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
@@ -32,7 +32,7 @@ const UserProfile = () => {
 
             try {
                 setLoading(true);
-                const response = await axios.get(`/api/posts/user/${id}`, { withCredentials: true });
+                const response = await axios.get(`${API_BASE_URL}/api/posts/user/${id}`, { withCredentials: true });
 
                 if (response.data.success) {
                     setUserPosts(response.data.posts);
@@ -55,7 +55,7 @@ const UserProfile = () => {
 
             try {
                 const response = await axios.get(
-                    `/api/users/follow-status/${id}`,
+                    `${API_BASE_URL}/api/users/follow-status/${id}`,
                     {
                         withCredentials: true
                     }
@@ -81,7 +81,7 @@ const UserProfile = () => {
         setIsLoading(true);
         try {
             const response = await axios.post(
-                `/api/users/follow/${id}`,
+                `${API_BASE_URL}/api/users/follow/${id}`,
                 {},
                 {
                     withCredentials: true

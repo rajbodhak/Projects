@@ -4,6 +4,7 @@ import AutoCompleteInput from '@/components/AutoCompleteInput'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { API_BASE_URL } from '@/lib/apiConfig'
 interface User {
     _id: string;
     username: string;
@@ -25,7 +26,7 @@ const Search = () => {
         }
         setisLoading(true);
         try {
-            const response = await axios.get(`/api/users/search?query=${encodeURIComponent(query)}&limit=10`);
+            const response = await axios.get(`${API_BASE_URL}/api/users/search?query=${encodeURIComponent(query)}&limit=10`);
             if (response.data.success) {
                 return response.data.users;
             }

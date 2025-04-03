@@ -8,6 +8,7 @@ import { Rootstate } from "@/redux/store";
 import { setAuthUser } from "@/redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { API_BASE_URL } from "@/lib/apiConfig";
 
 interface PostCardProps {
     post: Post;
@@ -50,8 +51,8 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
 
             const isLiking = !liked;
             const endpoint = isLiking
-                ? `/api/posts/like/${postData._id}`
-                : `/api/posts/dislike/${postData._id}`;
+                ? `${API_BASE_URL}/api/posts/like/${postData._id}`
+                : `${API_BASE_URL}/api/posts/dislike/${postData._id}`;
 
             const response = await axios.post(endpoint, {}, { withCredentials: true });
 

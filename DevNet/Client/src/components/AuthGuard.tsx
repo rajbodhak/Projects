@@ -4,6 +4,7 @@ import { Rootstate } from '@/redux/store';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '@/lib/apiConfig';
 
 interface AuthGuardProps {
     children: ReactNode;
@@ -18,7 +19,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
         const validateToken = async () => {
             if (user) {
                 try {
-                    const response = await axios.get('http://localhost:8000/api/users/validate-token', {
+                    const response = await axios.get(`${API_BASE_URL}/api/users/validate-token`, {
                         withCredentials: true
                     });
                     setIsTokenValid(response.data.valid);

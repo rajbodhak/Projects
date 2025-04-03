@@ -2,6 +2,7 @@ import { User } from '@/lib/types'
 import axios from 'axios';
 import { useState, useEffect } from 'react'
 import SuggestedUserCard from './SuggestedUserCard';
+import { API_BASE_URL } from '@/lib/apiConfig';
 
 const RightSideBar = () => {
     const [userData, setUserData] = useState<User[] | null>(null);
@@ -9,7 +10,7 @@ const RightSideBar = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/api/users/suggested-users/", { withCredentials: true });
+                const response = await axios.get(`${API_BASE_URL}/api/users/suggested-users/`, { withCredentials: true });
                 if (response.data.success) {
                     setUserData(response.data.users);
                 }
