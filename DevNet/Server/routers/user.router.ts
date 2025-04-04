@@ -29,6 +29,6 @@ router.post("/follow/:followId", isAuthenticated, followOrUnfollow);
 router.get("/following", isAuthenticated, getFollowingUsers)
 router.get('/follow-status/:followId', isAuthenticated, getFollowStatus);
 router.get('/validate-token', isAuthenticated, validateToken);
-router.get('/search', isAuthenticated, searchUsers)
+router.get('/search', searchUsers)
 
 export default router;

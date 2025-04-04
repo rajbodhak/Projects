@@ -195,7 +195,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
 
     return (
         <>
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 p-4 rounded-xl w-xl">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 p-4 rounded-xl w- sm:w-md">
                 <div className="flex justify-between">
                     <div className="flex items-center">
                         <img src={postData?.user?.profilePicture} alt={postData?.user?.username} className="w-11 h-11 rounded-full cursor-pointer" onClick={handleRedirectProfile} />

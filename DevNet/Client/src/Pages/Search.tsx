@@ -47,7 +47,7 @@ const Search = () => {
     return (
         <div className='flex items-center justify-center flex-col max-w-md mx-auto w-full'>
             <h1 className='text-center text-xl my-4 font-black'>Explore</h1>
-            <div className='relative w-full overflow-visible'>
+            <div className='relative w-full overflow-visible mx-3'>
                 <div className='relative group w-full overflow-visible'>
                     <div className='absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg opacity-75 group-hover:opacity-100 blur-sm group-hover:blur transition duration-200'></div>
                     <div className='relative bg-white dark:bg-gray-900 rounded-lg p-1 overflow-visible'>
