@@ -17,7 +17,7 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
 
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/users/follow-status/${userinfo._id}`,
+          `${API_BASE_URL}/api/users/follow-status/${userinfo._id}`,
           {
             withCredentials: true
           }
