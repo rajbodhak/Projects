@@ -3,7 +3,7 @@ import Posts from "./Posts";
 
 const Feed = () => {
     return (
-        <div>
+        <div className="flex flex-col items-center">
             <Posts />
         </div>
     )

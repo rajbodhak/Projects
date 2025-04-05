@@ -195,51 +195,97 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
 
     return (
         <>
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 p-4 rounded-xl w- sm:w-md">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-800 p-3 sm:p-4 rounded-xl w-full">
                 <div className="flex justify-between">
                     <div className="flex items-center">
-                        <img src={postData?.user?.profilePicture} alt={postData?.user?.username} className="w-11 h-11 rounded-full cursor-pointer" onClick={handleRedirectProfile} />
-                        <div className="ml-1.5 text-sm leading-tight">
-                            <span className="text-black dark:text-white font-bold block cursor-pointer" onClick={handleRedirectProfile}>{postData?.user?.username}</span>
-                            <span className="text-gray-500 dark:text-gray-300 font-normal block cursor-pointer" onClick={handleRedirectProfile}>@{postData?.user?.username?.toLowerCase() || 'user'}</span>
+                        <img
+                            src={postData?.user?.profilePicture}
+                            alt={postData?.user?.username}
+                            className="w-8 h-8 sm:w-10 md:w-11 sm:h-10 md:h-11 rounded-full cursor-pointer"
+                            onClick={handleRedirectProfile}
+                        />
+                        <div className="ml-1 sm:ml-1.5 text-xs sm:text-sm leading-tight">
+                            <span
+                                className="text-black dark:text-white font-bold block cursor-pointer"
+                                onClick={handleRedirectProfile}
+                            >
+                                {postData?.user?.username}
+                            </span>
+                            <span
+                                className="text-gray-500 dark:text-gray-300 text-xs sm:text-sm font-normal block cursor-pointer"
+                                onClick={handleRedirectProfile}
+                            >
+                                @{postData?.user?.username?.toLowerCase() || 'user'}
+                            </span>
                         </div>
                     </div>
                     <div className="flex items-center">
-                        <p className="text-gray-500 dark:text-gray-400 text-base py-1 my-0.5">{formatDate(postData?.createdAt ?? "")}</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm py-1 my-0.5">
+                            {formatDate(postData?.createdAt ?? "")}
+                        </p>
                         {isOwnPost && (
                             <button
                                 onClick={handleDelete}
                                 className="text-red-500 hover:text-red-700 ml-2"
                                 title="Delete post"
                             >
-                                <Trash2 size={18} />
+                                <Trash2 size={16} className="sm:hidden" />
+                                <Trash2 size={18} className="hidden sm:block" />
                             </button>
                         )}
                     </div>
                 </div>
 
-                <p className="text-black dark:text-white block text-xl leading-snug mt-3 text-left">{postData?.content}</p>
+                <p className="text-black dark:text-white block text-sm sm:text-base md:text-lg lg:text-xl leading-snug mt-2 sm:mt-3 text-left">
+                    {postData?.content}
+                </p>
 
                 {postData?.image && (
-                    <img src={postData.image} alt="post" className="mt-2 rounded-xl border border-gray-100 dark:border-gray-700" />
+                    <img
+                        src={postData.image}
+                        alt="post"
+                        className="mt-2 rounded-xl border border-gray-100 dark:border-gray-700"
+                    />
                 )}
 
-                <div className="flex text-gray-500 dark:text-gray-400 mt-3">
-                    <div className="flex items-center mr-6">
+                <div className="flex text-gray-500 dark:text-gray-400 mt-2 sm:mt-3">
+                    <div className="flex items-center mr-4 sm:mr-6">
                         <button onClick={handleLike} className="flex items-center focus:outline-none">
-                            <Heart className={`mr-1 ${liked ? "fill-amber-500 text-amber-500" : "text-amber-500 hover:text-amber-700"}`} />
-                            <span>{postData?.likes?.length || 0}</span>
+                            <Heart
+                                className={`mr-1 sm:hidden ${liked ? "fill-amber-500 text-amber-500" : "text-amber-500 hover:text-amber-700"}`}
+                                size={16}
+
+                            />
+                            <Heart
+                                className={` hidden sm:block mr-1 ${liked ? "fill-amber-500 text-amber-500" : "text-amber-500 hover:text-amber-700"}`}
+                                size={18}
+                            />
+                            <span className="text-xs sm:text-sm">{postData?.likes?.length || 0}</span>
                         </button>
                     </div>
-                    <div className="flex items-center mr-6">
+                    <div className="flex items-center mr-4 sm:mr-6">
                         <button onClick={() => setIsModalOpen(true)} className="flex items-center focus:outline-none">
-                            <MessageCircle className="mr-1 text-amber-500 hover:text-amber-700" />
-                            <span>{postData?.comments?.length || 0}</span>
+                            <MessageCircle
+                                className="sm:hidden mr-1 text-amber-500 hover:text-amber-700"
+                                size={16}
+                            />
+                            <MessageCircle
+                                className=" hidden sm:block mr-1 text-amber-500 hover:text-amber-700"
+                                size={18}
+                            />
+                            <span className="text-xs sm:text-sm">{postData?.comments?.length || 0}</span>
                         </button>
                     </div>
                     <div className="flex items-center ml-auto">
                         <button onClick={handleBookmark} className="flex items-center focus:outline-none">
-                            <Bookmark className={`text-amber-500 hover:text-amber-700 ${bookmarked ? "fill-amber-500" : ""}`} />
+                            <Bookmark
+                                className={`sm:hidden text-amber-500 hover:text-amber-700 ${bookmarked ? "fill-amber-500" : ""}`}
+                                size={16}
+                            />
+                            <Bookmark
+                                className={`hidden sm:block text-amber-500 hover:text-amber-700 ${bookmarked ? "fill-amber-500" : ""}`}
+                                size={18}
+                            />
                         </button>
                     </div>
                 </div>
