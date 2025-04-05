@@ -184,7 +184,7 @@ const Messages = () => {
                             className={`w-9 h-9 rounded-full object-cover mr-3 border-2 ${theme === "light" ? "border-gray-300" : "border-gray-500"}`}
                         />
                     )}
-                    <h1 className="text-xl font-bold">{chatUser?.name || "Select a user"}</h1>
+                    <h1 className="text-xl font-bold pl-10">{chatUser?.name || "Select a user"}</h1>
                 </div>
 
                 {/* Chat Messages - Scrollable */}
