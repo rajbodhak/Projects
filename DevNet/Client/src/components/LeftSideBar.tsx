@@ -33,7 +33,7 @@ const LeftSideBar = () => {
     return (
         <>
             {/* Desktop sidebar (left side) - only visible on lg screens and above */}
-            <div className="hidden lg:block fixed top-0 left-0 z-10 w-[20%] h-screen bg-white border-r border-gray-200 shadow-md">
+            <div className="hidden lg:block fixed top-0 left-0 z-20 w-[20%] h-screen bg-white border-r border-gray-200 shadow-md">
                 <div className="p-6 border-b border-gray-200">
                     <h1 className="text-2xl font-bold text-gray-800">Logo</h1>
                 </div>
@@ -67,7 +67,7 @@ const LeftSideBar = () => {
             </div>
 
             {/* Mobile and tablet bottom navigation - visible on md screens and below */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 shadow-md">
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-200 shadow-md">
                 <div className="flex justify-between items-center px-2 py-3">
                     {sideBarItems.map((item, index) => {
                         const isActive = location.pathname === item.path;
