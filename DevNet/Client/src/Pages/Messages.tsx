@@ -97,9 +97,9 @@ const Messages = () => {
     };
 
     // Toggle theme function for future implementation
-    const toggleTheme = () => {
-        setTheme(theme === "light" ? "dark" : "light");
-    };
+    // const toggleTheme = () => {
+    //     setTheme(theme === "light" ? "dark" : "light");
+    // };
 
     // Determine theme-based classes
     const themeClasses = {

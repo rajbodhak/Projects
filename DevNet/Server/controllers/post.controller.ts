@@ -70,9 +70,42 @@ export const addNewPost = async (req: AuthenticatedRequest, res: Response) => {
     }
 };
 
+// export const getAllPosts = async (req: Request, res: Response) => {
+//     try {
+//         const posts = await Post.find().sort({ createdAt: -1 })
+//             .populate({ path: 'user', select: 'username profilePicture' })
+//             .populate({
+//                 path: 'comments',
+//                 options: { sort: { createdAt: -1 } },
+//                 populate: {
+//                     path: 'user',
+//                     select: 'username profilePicture',
+//                 }
+//             });
+//         return res.status(200).json({
+//             posts,
+//             success: true
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({
+//             error: "GetAllPosts Internal Server Error",
+//             success: false
+//         });
+//     }
+// };
+
 export const getAllPosts = async (req: Request, res: Response) => {
     try {
-        const posts = await Post.find().sort({ createdAt: -1 })
+        // Get the "cursor" - which is the number of posts to skip
+        const skip = parseInt(req.query.skip as string) || 0;
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        // Get posts after the skip point
+        const posts = await Post.find()
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit + 1)
             .populate({ path: 'user', select: 'username profilePicture' })
             .populate({
                 path: 'comments',
@@ -82,8 +115,16 @@ export const getAllPosts = async (req: Request, res: Response) => {
                     select: 'username profilePicture',
                 }
             });
+
+        // Check if there are more posts 
+        const hasMore = posts.length > limit;
+
+        // Remove the extra post we fetched just to check if there are more
+        const postsToSend = hasMore ? posts.slice(0, limit) : posts;
+
         return res.status(200).json({
-            posts,
+            posts: postsToSend,
+            hasMore,
             success: true
         });
     } catch (error) {
