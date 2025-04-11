@@ -9,6 +9,7 @@ import { setMessages } from "@/redux/chatSlice";
 import useGetMessages from "@/hooks/useGetMessages";
 import useGetRTM from "@/hooks/useGetRTM";
 import { API_BASE_URL } from "@/lib/apiConfig";
+import defaultPfp from "../assets/default-pfp.webp"
 
 const Messages = () => {
     const [followingUsers, setFollowingUsers] = useState<User[]>([]);
@@ -152,7 +153,7 @@ const Messages = () => {
                                 >
                                     <div className="flex items-center">
                                         <img
-                                            src={user.profilePicture}
+                                            src={user.profilePicture || defaultPfp}
                                             alt="profile"
                                             className={`w-10 h-10 rounded-full object-cover mr-3 border-2 ${theme === "light" ? "border-gray-300" : "border-gray-500"}`}
                                         />

@@ -221,7 +221,7 @@ const UserProfile = () => {
             </div>
 
             {/* Posts Grid */}
-            <div className="max-w-4xl mx-auto px-4 pb-8">
+            <div className="max-w-2xl mx-auto px-4 pb-8 w-full">
                 {loading ? (
                     <div className="flex justify-center py-10">
                         <p className="text-gray-500">Loading posts...</p>

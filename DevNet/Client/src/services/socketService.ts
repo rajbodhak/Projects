@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-
+import { API_BASE_URL } from "@/lib/apiConfig";
 class SocketService {
     private static instance: SocketService;
     private socket: Socket | null = null;
@@ -15,7 +15,7 @@ class SocketService {
 
     connect(userId: string) {
         if (!this.socket) {
-            this.socket = io('http://localhost:8000', {
+            this.socket = io(API_BASE_URL, {
                 query: {
                     id: userId
                 },

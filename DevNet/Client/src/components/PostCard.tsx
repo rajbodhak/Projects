@@ -9,6 +9,7 @@ import { setAuthUser } from "@/redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { API_BASE_URL } from "@/lib/apiConfig";
+import defaultPfp from "../assets/default-pfp.webp"
 
 interface PostCardProps {
     post: Post;
@@ -199,7 +200,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
                 <div className="flex justify-between">
                     <div className="flex items-center">
                         <img
-                            src={postData?.user?.profilePicture}
+                            src={postData?.user?.profilePicture || defaultPfp}
                             alt={postData?.user?.username}
                             className="w-8 h-8 sm:w-10 md:w-11 sm:h-10 md:h-11 rounded-full cursor-pointer"
                             onClick={handleRedirectProfile}

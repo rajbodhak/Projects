@@ -10,7 +10,7 @@ const Posts = () => {
     const [error, setError] = useState<string | null>(null);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [skip, setSkip] = useState<number>(0);
-    const limit = 10; // Number of posts to fetch per request
+    const limit = 10;
 
     // Create an observer ref to track the last post element
     const observer = useRef<IntersectionObserver | null>(null);
@@ -99,7 +99,7 @@ const Posts = () => {
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 w-full">
             {posts.length > 0 ? (
                 posts.map((post, index) => {
                     if (posts.length === index + 1) {
