@@ -5,11 +5,13 @@ import { API_BASE_URL } from '@/lib/apiConfig';
 interface SuggestedUserCardProps {
   userinfo: User;
 }
+import { useNavigate } from 'react-router-dom';
+import defaultPfp from "../assets/default-pfp.webp"
 
 const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   // Check follow status when component mounts
   useEffect(() => {
     const checkFollowStatus = async () => {
@@ -56,15 +58,30 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
       setIsLoading(false);
     }
   };
+  const handleRedirectProfile = () => {
+    if (userinfo._id) {
+      navigate(`/${userinfo._id}`);
+    } else {
+      console.log("User ID is undefined");
+    }
+  };
 
   return (
-    <div className='p-2 rounded-2xl flex justify-between items-center border border-gray-400 mt-2'>
-      <div className='flex flex-col'>
-        <span className='text-lg font-bold text-gray-800'>{userinfo.name}</span>
-        <span className='text-md text-gray-700'>@{userinfo.username}</span>
+    <div className='p-2 rounded-2xl flex items-center justify-between border border-gray-400 mt-2'>
+      <div className='flex gap-1'>
+        <img
+          src={userinfo.profilePicture || defaultPfp}
+          alt={userinfo.username}
+          className="w-8 h-8 sm:w-10 md:w-11 sm:h-10 md:h-11 rounded-full cursor-pointer"
+          onClick={handleRedirectProfile}
+        />
+        <div className='flex flex-col'>
+          <span className='text-md font-bold text-gray-800 cursor-pointer select-none' onClick={handleRedirectProfile}>{userinfo.name}</span>
+          <span className='text-sm text-gray-700 cursor-pointer select-none' onClick={handleRedirectProfile}>@{userinfo.username}</span>
+        </div>
       </div>
       <button
-        className={`btn-secondary !w-28 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`btn-secondary !w-28  ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={handleFollowOrUnfollow}
         disabled={isLoading}
       >

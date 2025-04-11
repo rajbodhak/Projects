@@ -180,7 +180,7 @@ const Messages = () => {
                 <div className={`p-4 border-b ${themeClasses.border} ${themeClasses.headerBg} flex items-center sticky top-0 z-10`}>
                     {chatUser && (
                         <img
-                            src={chatUser?.profilePicture}
+                            src={chatUser?.profilePicture || defaultPfp}
                             alt="profile"
                             className={`w-9 h-9 rounded-full object-cover mr-3 border-2 ${theme === "light" ? "border-gray-300" : "border-gray-500"}`}
                         />

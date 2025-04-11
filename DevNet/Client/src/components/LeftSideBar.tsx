@@ -44,7 +44,7 @@ const LeftSideBar = () => {
                             <div
                                 key={index}
                                 className={`
-                                    flex items-center px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 group
+                                    flex items-center px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 group select-none
                                     ${isActive ? "bg-blue-50 text-blue-600" : "hover:bg-gray-100 text-gray-600"}
                                 `}
                                 onClick={() => sidebarItemHandler(item.path)}

@@ -8,6 +8,7 @@ import { Post } from '@/lib/types';
 import { Grid3x3, Settings, ExternalLink } from 'lucide-react';
 import useGetProfileById from '@/hooks/useGetProfileById';
 import { API_BASE_URL } from '@/lib/apiConfig';
+import defaultPfp from "../assets/default-pfp.webp"
 const UserProfile = () => {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
@@ -126,7 +127,7 @@ const UserProfile = () => {
                     {/* Profile Picture */}
                     <div className="w-32 md:w-40 flex-shrink-0 mb-4 md:mb-0">
                         <img
-                            src={userProfileData.profilePicture}
+                            src={userProfileData.profilePicture || defaultPfp}
                             alt={`${userProfileData.username}'s profile`}
                             className="w-full h-auto aspect-square rounded-full border-2 border-amber-500 object-cover"
                         />
