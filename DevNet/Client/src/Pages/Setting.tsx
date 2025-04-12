@@ -33,7 +33,7 @@ const Setting = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4">
-            <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">Account Settings</h1>
+            <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-8">Account Settings</h1>
             <ProfileEdit
                 userinfo={userinfo}
                 onUpdate={handleUpdate}

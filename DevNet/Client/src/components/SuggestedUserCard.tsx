@@ -76,8 +76,8 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
           onClick={handleRedirectProfile}
         />
         <div className='flex flex-col'>
-          <span className='text-md font-bold text-gray-800 cursor-pointer select-none' onClick={handleRedirectProfile}>{userinfo.name}</span>
-          <span className='text-sm text-gray-700 cursor-pointer select-none' onClick={handleRedirectProfile}>@{userinfo.username}</span>
+          <span className='text-md font-bold text-gray-800 dark:text-gray-300 cursor-pointer select-none' onClick={handleRedirectProfile}>{userinfo.name}</span>
+          <span className='text-sm text-gray-700 dark:text-gray-400 cursor-pointer select-none' onClick={handleRedirectProfile}>@{userinfo.username}</span>
         </div>
       </div>
       <button

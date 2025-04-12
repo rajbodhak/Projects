@@ -1,14 +1,16 @@
-import { Home, Search, Bell, Mail, Bookmark, User } from "lucide-react";
+import { Home, Search, Bell, Mail, Bookmark, User, Sun, Moon } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import { markAllNotificationsAsRead } from "@/redux/rtnSlice";
+import { toggleTheme } from "@/redux/themeSlice"; // Import the theme toggle action
 
 const LeftSideBar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const user = useSelector((state: Rootstate) => state.auth.user);
     const { notifications } = useSelector((state: Rootstate) => state.realTimeNotification);
+    const { mode } = useSelector((state: Rootstate) => state.theme); // Get current theme
     const dispatch = useDispatch();
 
     const sideBarItems = [
@@ -27,15 +29,20 @@ const LeftSideBar = () => {
         navigate(path);
     };
 
+    // Handle theme toggle
+    const handleThemeToggle = () => {
+        dispatch(toggleTheme());
+    };
+
     // Count of unread notifications
     const unreadNotificationsCount = notifications.filter(notification => !notification.isRead).length;
 
     return (
         <>
             {/* Desktop sidebar (left side) - only visible on lg screens and above */}
-            <div className="hidden lg:block fixed top-0 left-0 z-20 w-[20%] h-screen bg-white border-r border-gray-200 shadow-md">
-                <div className="p-6 border-b border-gray-200">
-                    <h1 className="text-2xl font-bold text-gray-800">Logo</h1>
+            <div className="hidden lg:block fixed top-0 left-0 z-20 w-[20%] h-screen bg-white border-r border-gray-200 shadow-md dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Logo</h1>
                 </div>
                 <nav className="p-4">
                     {sideBarItems.map((item, index) => {
@@ -45,11 +52,13 @@ const LeftSideBar = () => {
                                 key={index}
                                 className={`
                                     flex items-center px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 group select-none
-                                    ${isActive ? "bg-blue-50 text-blue-600" : "hover:bg-gray-100 text-gray-600"}
+                                    ${isActive
+                                        ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                                        : "hover:bg-gray-100 text-gray-600 dark:hover:bg-gray-800 dark:text-gray-300"}
                                 `}
                                 onClick={() => sidebarItemHandler(item.path)}
                             >
-                                <div className={`mr-4 ${isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"} relative`}>
+                                <div className={`mr-4 ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"} relative`}>
                                     {item.icon}
                                 </div>
                                 <span className="font-medium">{item.itemName}</span>
@@ -63,11 +72,22 @@ const LeftSideBar = () => {
                             </div>
                         );
                     })}
+
+                    {/* Theme toggle button for desktop */}
+                    <div
+                        className="flex items-center px-4 py-3 mt-4 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-gray-100 text-gray-600 dark:hover:bg-gray-800 dark:text-gray-300"
+                        onClick={handleThemeToggle}
+                    >
+                        <div className="mr-4 text-gray-400">
+                            {mode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+                        </div>
+                        <span className="font-medium">{mode === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+                    </div>
                 </nav>
             </div>
 
             {/* Mobile and tablet bottom navigation - visible on md screens and below */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-200 shadow-md">
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-200 shadow-md dark:bg-gray-900 dark:border-gray-700">
                 <div className="flex justify-between items-center px-2 py-3">
                     {sideBarItems.map((item, index) => {
                         const isActive = location.pathname === item.path;
@@ -76,7 +96,7 @@ const LeftSideBar = () => {
                                 key={index}
                                 className={`
                                     flex flex-col items-center justify-center flex-1 cursor-pointer transition-colors duration-200
-                                    ${isActive ? "text-blue-600" : "text-gray-400"}
+                                    ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-gray-500"}
                                 `}
                                 onClick={() => sidebarItemHandler(item.path)}
                             >
@@ -91,6 +111,14 @@ const LeftSideBar = () => {
                             </div>
                         );
                     })}
+
+                    {/* Theme toggle button for mobile */}
+                    <div
+                        className="flex flex-col items-center justify-center flex-1 cursor-pointer transition-colors duration-200 text-gray-400 dark:text-gray-500"
+                        onClick={handleThemeToggle}
+                    >
+                        {mode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+                    </div>
                 </div>
             </div>
         </>

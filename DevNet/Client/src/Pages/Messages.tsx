@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { User } from "@/lib/types";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,10 +15,10 @@ const Messages = () => {
     const [followingUsers, setFollowingUsers] = useState<User[]>([]);
     const [textMessage, setTextMessage] = useState("");
     const [showSidebar, setShowSidebar] = useState(false);
-    const [theme, setTheme] = useState("light"); // Default theme set to light
     const dispatch = useDispatch();
     const { chatUser, user } = useSelector((state: Rootstate) => state.auth);
     const { onlineUsers, messages } = useSelector((state: Rootstate) => state.chat);
+    const { mode } = useSelector((state: Rootstate) => state.theme);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     useGetRTM();
@@ -97,34 +97,12 @@ const Messages = () => {
         return `${hour}:${minutes}`;
     };
 
-    // Toggle theme function for future implementation
-    // const toggleTheme = () => {
-    //     setTheme(theme === "light" ? "dark" : "light");
-    // };
-
-    // Determine theme-based classes
-    const themeClasses = {
-        mainBg: theme === "light" ? "bg-gray-50" : "bg-gray-900",
-        sidebarBg: theme === "light" ? "bg-white" : "bg-gray-800",
-        headerBg: theme === "light" ? "bg-white" : "bg-gray-800",
-        border: theme === "light" ? "border-gray-200" : "border-gray-700",
-        text: theme === "light" ? "text-gray-800" : "text-white",
-        secondaryText: theme === "light" ? "text-gray-600" : "text-gray-400",
-        inputBg: theme === "light" ? "bg-gray-100" : "bg-gray-700",
-        userSelected: theme === "light" ? "bg-blue-50" : "bg-gray-700",
-        userHover: theme === "light" ? "hover:bg-gray-100" : "hover:bg-gray-700",
-        messageSent: theme === "light" ? "bg-blue-500" : "bg-green-600",
-        messageReceived: theme === "light" ? "bg-gray-200" : "bg-gray-600",
-        messageTextSent: "text-white",
-        messageTextReceived: theme === "light" ? "text-gray-800" : "text-white",
-        menuButton: theme === "light" ? "text-gray-800 bg-gray-100" : "text-white bg-gray-700"
-    };
-
     return (
-        <div className={`flex min-h-screen w-full ${themeClasses.mainBg} ${themeClasses.text}`}>
+        <div className={`flex min-h-screen w-full ${mode === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
             {/* Mobile Menu Button */}
             <button
-                className={`md:hidden fixed top-4 left-4 z-50 p-2 rounded-full ${themeClasses.menuButton}`}
+                className={`md:hidden fixed top-4 left-4 z-50 p-2 rounded-full ${mode === 'dark' ? 'text-white bg-gray-700' : 'text-gray-800 bg-gray-100'
+                    }`}
                 onClick={() => setShowSidebar(!showSidebar)}
             >
                 {showSidebar ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -132,12 +110,13 @@ const Messages = () => {
 
             {/* Sidebar for Following Users */}
             <section
-                className={`${themeClasses.sidebarBg} border-r ${themeClasses.border} fixed md:relative inset-y-0 left-0 z-10
+                className={`${mode === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r fixed md:relative inset-y-0 left-0 z-10
                     w-64 md:w-[30%] transform transition-transform duration-300 ease-in-out
                     ${showSidebar ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} 
                     h-screen flex flex-col`}
             >
-                <h1 className={`text-center text-2xl font-bold border-b ${themeClasses.border} py-4 sticky top-0 ${themeClasses.sidebarBg} z-10`}>Messages</h1>
+                <h1 className={`text-center text-2xl font-bold border-b ${mode === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
+                    } py-4 sticky top-0 z-10`}>Messages</h1>
 
                 {/* Scrollable user list */}
                 <div className="px-4 flex-1 overflow-y-auto">
@@ -147,29 +126,39 @@ const Messages = () => {
                             return (
                                 <div
                                     key={user._id}
-                                    className={`px-4 py-3 rounded-lg my-2 cursor-pointer border ${themeClasses.border} flex justify-between items-center 
-                                        ${chatUser?._id === user._id ? themeClasses.userSelected : `${themeClasses.sidebarBg} ${themeClasses.userHover}`}`}
+                                    className={`px-4 py-3 rounded-lg my-2 cursor-pointer border ${mode === 'dark' ? 'border-gray-700' : 'border-gray-200'
+                                        } flex justify-between items-center 
+                                        ${chatUser?._id === user._id
+                                            ? mode === 'dark' ? 'bg-gray-700' : 'bg-blue-50'
+                                            : mode === 'dark'
+                                                ? 'bg-gray-800 hover:bg-gray-700'
+                                                : 'bg-white hover:bg-gray-100'
+                                        }`}
                                     onClick={() => handleUserClick(user)}
                                 >
                                     <div className="flex items-center">
                                         <img
                                             src={user.profilePicture || defaultPfp}
                                             alt="profile"
-                                            className={`w-10 h-10 rounded-full object-cover mr-3 border-2 ${theme === "light" ? "border-gray-300" : "border-gray-500"}`}
+                                            className={`w-10 h-10 rounded-full object-cover mr-3 border-2 ${mode === 'dark' ? 'border-gray-500' : 'border-gray-300'
+                                                }`}
                                         />
                                         <div className="flex flex-col">
                                             <p className="font-bold">{user.name}</p>
-                                            <p className={themeClasses.secondaryText}>@{user.username}</p>
+                                            <p className={mode === 'dark' ? 'text-gray-400' : 'text-gray-600'}>@{user.username}</p>
                                         </div>
                                     </div>
-                                    <span className={`text-xs font-bold ${onlineUser ? "text-green-600" : theme === "light" ? "text-gray-400" : "text-gray-600"}`}>
+                                    <span className={`text-xs font-bold ${onlineUser
+                                            ? 'text-green-600'
+                                            : mode === 'dark' ? 'text-gray-600' : 'text-gray-400'
+                                        }`}>
                                         {onlineUser ? "Online" : "Offline"}
                                     </span>
                                 </div>
                             );
                         })
                     ) : (
-                        <p className={themeClasses.secondaryText}>No following users</p>
+                        <p className={mode === 'dark' ? 'text-gray-400' : 'text-gray-600'}>No following users</p>
                     )}
                 </div>
             </section>
@@ -177,12 +166,14 @@ const Messages = () => {
             {/* Chat Section */}
             <section className="flex-1 flex flex-col md:ml-0 ml-0 h-screen">
                 {/* Chat Header - Fixed */}
-                <div className={`p-4 border-b ${themeClasses.border} ${themeClasses.headerBg} flex items-center sticky top-0 z-10`}>
+                <div className={`p-4 border-b ${mode === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
+                    } flex items-center sticky top-0 z-10`}>
                     {chatUser && (
                         <img
                             src={chatUser?.profilePicture || defaultPfp}
                             alt="profile"
-                            className={`w-9 h-9 rounded-full object-cover mr-3 border-2 ${theme === "light" ? "border-gray-300" : "border-gray-500"}`}
+                            className={`w-9 h-9 rounded-full object-cover mr-3 border-2 ${mode === 'dark' ? 'border-gray-500' : 'border-gray-300'
+                                }`}
                         />
                     )}
                     <h1 className="text-xl font-bold pl-10">{chatUser?.name || "Select a user"}</h1>
@@ -190,7 +181,8 @@ const Messages = () => {
 
                 {/* Chat Messages - Scrollable */}
                 <div
-                    className={`flex-1 overflow-y-auto p-4 space-y-3 ${themeClasses.mainBg}`}
+                    className={`flex-1 overflow-y-auto p-4 space-y-3 ${mode === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+                        }`}
                     style={{ height: "calc(100vh - 128px)" }} // Account for header and input heights
                 >
                     {messages.length > 0 ? (
@@ -199,8 +191,11 @@ const Messages = () => {
                                 <div
                                     className={`max-w-xs sm:max-w-sm md:max-w-md px-3 py-2 rounded-lg 
                                         ${msg.sender === user?._id
-                                            ? `${themeClasses.messageSent} ${themeClasses.messageTextSent}`
-                                            : `${themeClasses.messageReceived} ${themeClasses.messageTextReceived}`}`}
+                                            ? mode === 'dark' ? 'bg-green-600 text-white' : 'bg-blue-500 text-white'
+                                            : mode === 'dark'
+                                                ? 'bg-gray-600 text-white'
+                                                : 'bg-gray-200 text-gray-800'
+                                        }`}
                                 >
                                     <p className="break-words">{msg.message}</p>
                                     <span className="text-xs opacity-75 float-right mt-1">{formatTime(msg.createdAt)}</span>
@@ -208,7 +203,8 @@ const Messages = () => {
                             </div>
                         ))
                     ) : (
-                        <p className={`${themeClasses.secondaryText} text-center mt-4`}>
+                        <p className={`${mode === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                            } text-center mt-4`}>
                             {chatUser ? "Start a conversation!" : "Select a user to start chatting"}
                         </p>
                     )}
@@ -217,10 +213,12 @@ const Messages = () => {
 
                 {/* Message Input - Fixed at bottom */}
                 {chatUser && (
-                    <div className={`p-3 pb-12 border-t ${themeClasses.border} ${themeClasses.headerBg} flex items-center sticky bottom-0 z-10`}>
+                    <div className={`p-3 pb-12 border-t ${mode === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
+                        } flex items-center sticky bottom-0 z-10`}>
                         <input
                             type="text"
-                            className={`flex-1 px-4 py-2 ${themeClasses.inputBg} rounded-lg focus:outline-none ${themeClasses.text}`}
+                            className={`flex-1 px-4 py-2 ${mode === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-800'
+                                } rounded-lg focus:outline-none`}
                             placeholder="Type a message..."
                             value={textMessage}
                             onChange={(e) => setTextMessage(e.target.value)}

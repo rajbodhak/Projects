@@ -51,14 +51,14 @@ const CreatePost = () => {
     };
 
     return (
-        <div className="border border-gray-700 rounded-2xl p-4 w-full max-w-xl mx-auto text-black/70 mb-3 ">
+        <div className="border border-gray-700 dark:border-gray-500 rounded-2xl p-4 w-full max-w-xl mx-auto text-black/70 dark:text-white/80 mb-3 ">
             <form onSubmit={handleCreatePost} className="flex flex-col gap-3">
                 <div className="flex gap-3">
                     {/* Profile Picture */}
                     <img
                         src={user?.profilePicture}
                         alt="User Profile"
-                        className="w-10 h-10 rounded-full border border-gray-600"
+                        className="w-10 h-10 rounded-full border border-gray-600 dark:border-gray-500"
                     />
 
                     {/* Post Input */}
@@ -67,7 +67,7 @@ const CreatePost = () => {
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             placeholder="What's happening?"
-                            className="w-full bg-transparent border-none outline-none resize-none text-lg placeholder-gray-400 p-2"
+                            className="w-full bg-transparent border-none outline-none resize-none text-lg placeholder-gray-400 dark:placeholder-gray-300 p-2"
                             rows={3}
                         />
 
