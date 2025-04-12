@@ -3,13 +3,15 @@ import authReducer from "./authSlice";
 import socketReducer from "./socketSlice";
 import chatReducer from "./chatSlice";
 import rtnReducer from "./rtnSlice";
+import themeReducer from "./themeSlice";
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
         socketIo: socketReducer,
         chat: chatReducer,
-        realTimeNotification: rtnReducer
+        realTimeNotification: rtnReducer,
+        theme: themeReducer
     },
 });
 
