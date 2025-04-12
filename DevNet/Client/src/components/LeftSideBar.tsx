@@ -40,10 +40,12 @@ const LeftSideBar = () => {
     return (
         <>
             {/* Desktop sidebar (left side) - only visible on lg screens and above */}
-            <div className="hidden lg:block fixed top-0 left-0 z-20 w-[20%] h-screen bg-white border-r border-gray-200 shadow-md dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+            <div className="lg:flex flex-col fixed top-0 left-0 z-20 w-[20%] h-screen bg-white border-r border-gray-200 shadow-md dark:bg-gray-900 dark:border-gray-700 dark:text-white hidden">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Logo</h1>
                 </div>
+
+                {/* Regular navigation items */}
                 <nav className="p-4">
                     {sideBarItems.map((item, index) => {
                         const isActive = location.pathname === item.path;
@@ -51,11 +53,11 @@ const LeftSideBar = () => {
                             <div
                                 key={index}
                                 className={`
-                                    flex items-center px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 group select-none
-                                    ${isActive
+                        flex items-center px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 group select-none
+                        ${isActive
                                         ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
                                         : "hover:bg-gray-100 text-gray-600 dark:hover:bg-gray-800 dark:text-gray-300"}
-                                `}
+                    `}
                                 onClick={() => sidebarItemHandler(item.path)}
                             >
                                 <div className={`mr-4 ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"} relative`}>
@@ -72,10 +74,12 @@ const LeftSideBar = () => {
                             </div>
                         );
                     })}
+                </nav>
 
-                    {/* Theme toggle button for desktop */}
+                {/* Theme toggle button positioned absolutely at the bottom */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
                     <div
-                        className="flex items-center px-4 py-3 mt-4 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-gray-100 text-gray-600 dark:hover:bg-gray-800 dark:text-gray-300"
+                        className="flex items-center px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-gray-100 text-gray-600 dark:hover:bg-gray-800 dark:text-gray-300"
                         onClick={handleThemeToggle}
                     >
                         <div className="mr-4 text-gray-400">
@@ -83,7 +87,7 @@ const LeftSideBar = () => {
                         </div>
                         <span className="font-medium">{mode === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
                     </div>
-                </nav>
+                </div>
             </div>
 
             {/* Mobile and tablet bottom navigation - visible on md screens and below */}
