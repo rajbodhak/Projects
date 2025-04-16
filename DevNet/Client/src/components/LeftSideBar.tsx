@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import { markAllNotificationsAsRead } from "@/redux/rtnSlice";
-import { toggleTheme } from "@/redux/themeSlice"; // Import the theme toggle action
+import { toggleTheme } from "@/redux/themeSlice";
 
 const LeftSideBar = () => {
     const location = useLocation();
