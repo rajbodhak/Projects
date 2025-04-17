@@ -56,6 +56,9 @@ export const addNewPost = async (req: AuthenticatedRequest, res: Response) => {
         // Populate User Data
         await post.populate({ path: "user", select: "-password" });
 
+        //Emit socket for real time update
+        io.emit('newPost', post)
+
         return res.status(201).json({
             post,
             success: true
