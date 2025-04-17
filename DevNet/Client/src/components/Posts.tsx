@@ -3,14 +3,22 @@ import axios from "axios";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Post } from "@/lib/types";
 import { API_BASE_URL } from "@/lib/apiConfig";
+import useRealTimePosts from "@/hooks/useRealTimePosts";
+import { useDispatch, useSelector } from "react-redux";
+import { setPosts } from "@/redux/postSlice";
+import { Rootstate } from "@/redux/store";
 
 const Posts = () => {
-    const [posts, setPosts] = useState<Post[]>([]);
+    const dispatch = useDispatch();
+    const { posts: reduxPosts } = useSelector((state: Rootstate) => state.posts);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [skip, setSkip] = useState<number>(0);
     const limit = 10;
+
+    // For real time post update
+    useRealTimePosts();
 
     // Create an observer ref to track the last post element
     const observer = useRef<IntersectionObserver | null>(null);
@@ -47,12 +55,12 @@ const Posts = () => {
             });
 
             if (response.data.success && Array.isArray(response.data.posts)) {
-                setPosts(response.data.posts);
+                dispatch(setPosts(response.data.posts));
                 setSkip(response.data.posts.length);
                 setHasMore(response.data.hasMore);
             } else {
                 console.warn("API returned success but no posts or empty array");
-                setPosts([]);
+                dispatch(setPosts([]));
                 setHasMore(false);
             }
         } catch (error) {
@@ -74,7 +82,8 @@ const Posts = () => {
             });
 
             if (response.data.success && Array.isArray(response.data.posts) && response.data.posts.length > 0) {
-                setPosts(prevPosts => [...prevPosts, ...response.data.posts]);
+                // Update Redux store with new posts appended to existing ones
+                dispatch(setPosts([...reduxPosts, ...response.data.posts]));
                 setSkip(prev => prev + response.data.posts.length);
                 setHasMore(response.data.hasMore);
             } else {
@@ -89,20 +98,24 @@ const Posts = () => {
     };
 
     const handlePostUpdate = (postId: string, updatedPost: Post) => {
-        setPosts(prev =>
-            prev.map(post => (post._id === postId ? updatedPost : post))
+        // Update the post in Redux store
+        const updatedPosts = reduxPosts.map(post =>
+            post._id === postId ? updatedPost : post
         );
+        dispatch(setPosts(updatedPosts));
     };
 
     const handlePostDelete = (postId: string) => {
-        setPosts(prev => prev.filter(post => post._id !== postId));
+        // Remove the post from Redux store
+        const filteredPosts = reduxPosts.filter(post => post._id !== postId);
+        dispatch(setPosts(filteredPosts));
     };
 
     return (
         <div className="space-y-4 w-full">
-            {posts.length > 0 ? (
-                posts.map((post, index) => {
-                    if (posts.length === index + 1) {
+            {reduxPosts.length > 0 ? (
+                reduxPosts.map((post, index) => {
+                    if (reduxPosts.length === index + 1) {
                         // Add ref to the last element for infinite scrolling
                         return (
                             <div key={post._id} ref={lastPostElementRef}>
@@ -134,7 +147,7 @@ const Posts = () => {
                 </div>
             )}
 
-            {!hasMore && posts.length > 0 && (
+            {!hasMore && reduxPosts.length > 0 && (
                 <div className="text-center py-4 text-gray-500">No more posts to load</div>
             )}
 

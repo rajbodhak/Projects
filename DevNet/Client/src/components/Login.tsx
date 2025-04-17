@@ -139,7 +139,7 @@ const Login = () => {
                                     placeholder="you@example.com"
                                     value={input.email}
                                     onChange={changeInputHandler}
-                                    className={`w-full pl-10 pr-3 py-2.5 border ${errors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-amber-500'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
+                                    className={`w-full pl-10 pr-3 py-2.5 border ${errors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-amber-500'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-transparent text-black`}
                                 />
                             </div>
                             {errors.email && (
@@ -167,7 +167,7 @@ const Login = () => {
                                     placeholder="Enter your password"
                                     value={input.password}
                                     onChange={changeInputHandler}
-                                    className={`w-full pl-10 pr-10 py-2.5 border ${errors.password ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-amber-500'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
+                                    className={`w-full pl-10 pr-10 py-2.5 border ${errors.password ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-amber-500'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-transparent text-black`}
                                 />
                                 <button
                                     type="button"
