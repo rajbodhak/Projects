@@ -16,7 +16,7 @@ const CreatePost = () => {
         const file = e.target.files?.[0];
         if (file) {
             setImage(file);
-            setPreview(URL.createObjectURL(file)); // Generate preview URL
+            setPreview(URL.createObjectURL(file));
         }
     };
 
