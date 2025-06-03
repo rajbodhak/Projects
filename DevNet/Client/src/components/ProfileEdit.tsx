@@ -36,10 +36,19 @@ const ProfileEdit = ({ userinfo, onUpdate, onCancel }: ProfileDetailsProps) => {
         }
     }
 
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
         setError("");
+
+        //checking a valid github Link or Not
+        const githubPattern = /^https:\/\/github\.com\/[a-zA-Z0-9-]+$/;
+        if (!github || !githubPattern.test(github)) {
+            setError("Please enter a valid GitHub URL (e.g., https://github.com/yourusername)");
+            setIsSubmitting(false);
+            return
+        }
 
         try {
             const formdata = new FormData();
