@@ -42,12 +42,23 @@ const ProfileEdit = ({ userinfo, onUpdate, onCancel }: ProfileDetailsProps) => {
         setIsSubmitting(true);
         setError("");
 
-        //checking a valid github Link or Not
+        //Check a valid github Link or Not
         const githubPattern = /^https:\/\/github\.com\/[a-zA-Z0-9-]+$/;
         if (!github || !githubPattern.test(github)) {
             setError("Please enter a valid GitHub URL (e.g., https://github.com/yourusername)");
             setIsSubmitting(false);
-            return
+            return;
+        }
+
+        //Github user is valid or not
+        try {
+            const username = github.split("https://github.com/")[1];
+            await axios.get(`https://api.github.com/users/${username}`);
+
+        } catch (error) {
+            setError("Github user does not exist..");
+            setIsSubmitting(false);
+            return;
         }
 
         try {
