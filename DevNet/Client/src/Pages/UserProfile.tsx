@@ -189,7 +189,7 @@ const UserProfile = () => {
                                     className="text-blue-500 flex items-center mt-1 text-sm"
                                 >
                                     <ExternalLink size={14} className="mr-1" />
-                                    {userProfileData.github}
+                                    {userProfileData.username}'s Github
                                 </a>
                             )}
                         </div>
