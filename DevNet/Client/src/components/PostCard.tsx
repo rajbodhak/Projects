@@ -9,7 +9,9 @@ import { setAuthUser } from "@/redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { API_BASE_URL } from "@/lib/apiConfig";
-import defaultPfp from "../assets/default-pfp.webp"
+import defaultPfp from "../assets/default-pfp.webp";
+import Modal from "./Modal";
+import { motion } from "framer-motion";
 
 interface PostCardProps {
     post: Post;
@@ -19,6 +21,7 @@ interface PostCardProps {
 
 const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDelModalOpen, setIsDelModalOpen] = useState(false);
     const [liked, setLiked] = useState(false);
     const [bookmarked, setBookmarked] = useState(false);
     const [postData, setPostData] = useState<Post | null>(null);
@@ -135,14 +138,15 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
             console.log("Post ID is missing");
             return;
         }
-        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
-        if (!confirmDelete) return;
+        // const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+        // if (!confirmDelete) return;
         try {
             const response = await axios.delete(`/api/posts/delete/${postData._id}`, { withCredentials: true });
 
             if (response.data.success && typeof onDelete === "function") {
                 onDelete(postData._id);
             }
+            setIsDelModalOpen(false);
         } catch (error) {
             console.log("Delete toggling error", error);
         }
@@ -225,14 +229,45 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
                             {formatDate(postData?.createdAt ?? "")}
                         </p>
                         {isOwnPost && (
-                            <button
-                                onClick={handleDelete}
-                                className="text-red-500 hover:text-red-700 ml-2"
-                                title="Delete post"
-                            >
-                                <Trash2 size={16} className="sm:hidden" />
-                                <Trash2 size={18} className="hidden sm:block" />
-                            </button>
+                            <div className="">
+                                <button
+                                    onClick={() => setIsDelModalOpen(true)}
+                                    className="text-red-500 hover:text-red-700 ml-2"
+                                >
+                                    <Trash2 size={16} className="sm:hidden cursor-pointer" />
+                                    <Trash2 size={16} className="hidden sm:block cursor-pointer" />
+                                </button>
+
+                                <Modal
+                                    isOpen={isDelModalOpen}
+                                    onClose={() => setIsDelModalOpen(false)}
+                                    title="Confirm Delete"
+                                >
+                                    <p>Are you sure you want to delete this item?</p>
+                                    <div className="mt-4 flex justify-end gap-2">
+                                        <button
+                                            className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded cursor-pointer"
+                                            onClick={() => setIsDelModalOpen(false)}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            className="px-4 py-2 bg-red-500 text-white rounded cursor-pointer"
+                                            onClick={handleDelete}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </Modal>
+                            </div>
+                            // <button
+                            //     onClick={handleDelete}
+                            //     className="text-red-500 hover:text-red-700 ml-2"
+                            //     title="Delete post"
+                            // >
+                            //     <Trash2 size={16} className="sm:hidden" />
+                            //     <Trash2 size={18} className="hidden sm:block" />
+                            // </button>
                         )}
                     </div>
                 </div>
@@ -251,43 +286,55 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
 
                 <div className="flex text-gray-500 dark:text-gray-400 mt-2 sm:mt-3">
                     <div className="flex items-center mr-4 sm:mr-6">
-                        <button onClick={handleLike} className="flex items-center focus:outline-none">
+                        <motion.button
+                            whileTap={{ scale: 0.85 }}
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                            onClick={handleLike}
+                            className="flex items-center focus:outline-none">
                             <Heart
-                                className={`mr-1 sm:hidden ${liked ? "fill-amber-500 text-amber-500" : "text-amber-500 hover:text-amber-700"}`}
+                                className={`mr-1 sm:hidden cursor-pointer ${liked ? "fill-amber-500 text-amber-500" : "text-amber-500 hover:text-amber-700"}`}
                                 size={16}
 
                             />
                             <Heart
-                                className={` hidden sm:block mr-1 ${liked ? "fill-amber-500 text-amber-500" : "text-amber-500 hover:text-amber-700"}`}
+                                className={` hidden sm:block mr-1 cursor-pointer ${liked ? "fill-amber-500 text-amber-500" : "text-amber-500 hover:text-amber-700"}`}
                                 size={18}
                             />
                             <span className="text-xs sm:text-sm">{postData?.likes?.length || 0}</span>
-                        </button>
+                        </motion.button>
                     </div>
                     <div className="flex items-center mr-4 sm:mr-6">
-                        <button onClick={() => setIsModalOpen(true)} className="flex items-center focus:outline-none">
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            onClick={() => setIsModalOpen(true)} className="flex items-center focus:outline-none">
                             <MessageCircle
-                                className="sm:hidden mr-1 text-amber-500 hover:text-amber-700"
+                                className="sm:hidden mr-1 text-amber-500 hover:text-amber-700 cursor-pointer"
                                 size={16}
                             />
                             <MessageCircle
-                                className=" hidden sm:block mr-1 text-amber-500 hover:text-amber-700"
+                                className=" hidden sm:block mr-1 text-amber-500 hover:text-amber-700 cursor-pointer"
                                 size={18}
                             />
                             <span className="text-xs sm:text-sm">{postData?.comments?.length || 0}</span>
-                        </button>
+                        </motion.button>
                     </div>
                     <div className="flex items-center ml-auto">
-                        <button onClick={handleBookmark} className="flex items-center focus:outline-none">
+                        <motion.button
+                            whileTap={{ scale: 0.85 }}
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                            onClick={handleBookmark}
+                            className="flex items-center focus:outline-none">
                             <Bookmark
-                                className={`sm:hidden text-amber-500 hover:text-amber-700 ${bookmarked ? "fill-amber-500" : ""}`}
+                                className={`sm:hidden cursor-pointer text-amber-500 hover:text-amber-700 ${bookmarked ? "fill-amber-500" : ""}`}
                                 size={16}
                             />
                             <Bookmark
-                                className={`hidden sm:block text-amber-500 hover:text-amber-700 ${bookmarked ? "fill-amber-500" : ""}`}
+                                className={`hidden sm:block cursor-pointer text-amber-500 hover:text-amber-700 ${bookmarked ? "fill-amber-500" : ""}`}
                                 size={18}
                             />
-                        </button>
+                        </motion.button>
                     </div>
                 </div>
             </div>
