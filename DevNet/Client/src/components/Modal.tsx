@@ -1,4 +1,5 @@
 import { ReactNode, useEffect } from "react";
+import { X } from "lucide-react";
 
 type ModalProps = {
     isOpen: boolean;
@@ -24,21 +25,21 @@ const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            className="fixed inset-0 bg-black/65 h-screen bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm"
             onClick={onClose}
         >
             <div
                 className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 relative"
-                onClick={(e) => e.stopPropagation()} // Prevent close on inner click
+                onClick={(e) => e.stopPropagation()}
             >
                 {title && <h2 className="text-lg font-semibold mb-4">{title}</h2>}
                 {children}
                 <button
-                    className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-white"
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white"
                     onClick={onClose}
                     aria-label="Close Modal"
                 >
-                    ✕
+                    <X size={22} className="text-gray-500 hover:text-red-600" />
                 </button>
             </div>
         </div>
