@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 const Setting = () => {
     const navigate = useNavigate();
     const userinfo = useSelector((state: Rootstate) => state.auth.user);
-
     useEffect(() => {
         // Redirect if no user data is available
         if (!userinfo) {
@@ -33,6 +32,11 @@ const Setting = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4">
+            {(!userinfo.name || userinfo.name.trim() === '') && (
+                <p className="text-red-500 text-center mb-4 font-semibold">
+                    ⚠️ Your name is required to use the site. Please update your profile below.
+                </p>
+            )}
             <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-8">Account Settings</h1>
             <ProfileEdit
                 userinfo={userinfo}

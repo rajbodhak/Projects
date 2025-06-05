@@ -135,7 +135,8 @@ const ProfileEdit = ({ userinfo, onUpdate, onCancel }: ProfileDetailsProps) => {
 
                 <div className="space-y-3 sm:space-y-5">
                     <div>
-                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1 ml-1">Display Name</label>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1 ml-1">Display Name
+                            <span className='text-red-600 text-xl'> *</span></label>
                         <input
                             type="text"
                             value={name}
