@@ -48,6 +48,16 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
         />;
     }
 
+    // If user is logged in but name is missing or empty, redirect to settings
+    // Allow access to settings page even without name so they can set it
+    if (user && (!user.name || user.name.trim() === "" || user.name.trim() === " ") && location.pathname !== "/settings") {
+        return <Navigate
+            to="/settings"
+            state={{ from: location }}
+            replace
+        />;
+    }
+
     // If user exists and token is valid, render children
     return <>{children}</>;
 }
