@@ -4,6 +4,9 @@ import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { API_BASE_URL } from '@/lib/apiConfig';
+import { useDispatch } from 'react-redux';
+import { setAuthUser } from '@/redux/authSlice';
+
 const SignUp = () => {
     const [input, setInput] = useState({
         username: "",
@@ -18,6 +21,7 @@ const SignUp = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -82,7 +86,9 @@ const SignUp = () => {
                 });
 
                 if (response.data.success) {
-                    navigate("/");
+                    localStorage.setItem('token', response.data.token);
+                    dispatch(setAuthUser(response.data.user));
+                    navigate("/settings");
                     toast.success(response.data.message);
                 }
 
@@ -119,7 +125,7 @@ const SignUp = () => {
                                     placeholder="Your username"
                                     value={input.username}
                                     onChange={changeInputHandler}
-                                    className={`w-full pl-10 pr-3 py-2.5 border ${errors.username ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-amber-500'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
+                                    className={`w-full pl-10 pr-3 py-2.5 border text-black/60 ${errors.username ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-amber-500'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
                                 />
                             </div>
                             {errors.username && (
@@ -142,7 +148,7 @@ const SignUp = () => {
                                     placeholder="you@example.com"
                                     value={input.email}
                                     onChange={changeInputHandler}
-                                    className={`w-full pl-10 pr-3 py-2.5 border ${errors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-amber-500'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
+                                    className={`w-full pl-10 pr-3 py-2.5 border text-black/60 ${errors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-amber-500'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
                                 />
                             </div>
                             {errors.email && (
@@ -165,7 +171,7 @@ const SignUp = () => {
                                     placeholder="Create a password"
                                     value={input.password}
                                     onChange={changeInputHandler}
-                                    className={`w-full pl-10 pr-10 py-2.5 border ${errors.password ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-amber-500'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
+                                    className={`w-full pl-10 pr-10 py-2.5 border text-black/60 ${errors.password ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-amber-500'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
                                 />
                                 <button
                                     type="button"

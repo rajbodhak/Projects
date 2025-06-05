@@ -61,32 +61,89 @@ export const register = async (req: Request, res: Response): Promise<Response> =
                 error: "All fields should be provided",
                 success: false
             });
-        };
-        const user = await User.findOne({ email });
-        if (user) {
+        }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
             return res.status(401).json({
                 error: "This email already exist, try another one",
                 success: false
             });
-        };
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
-        await User.create({
+
+        // Create user and get the returned document
+        const newUser = await User.create({
             name: name || " ",
             username,
             email,
             password: hashedPassword
         });
 
-        return res.status(201).json({
-            message: "user created successfully",
-            success: true
-        })
+        // Populate posts (same as login)
+        await newUser.populate({
+            path: 'posts',
+            match: { user: newUser._id as mongoose.Types.ObjectId }
+        });
+
+        // Extract user data (same structure as login)
+        const userData = {
+            _id: newUser._id,
+            username: newUser.username,
+            email: newUser.email,
+            name: newUser.name,
+            profilePicture: newUser.profilePicture,
+            bio: newUser.bio,
+            github: newUser.github,
+            skills: newUser.skills,
+            bookmarks: newUser.bookmarks,
+            posts: newUser.posts,
+            followers: newUser.followers,
+            following: newUser.following
+        };
+
+        // Generate token (same as login)
+        const token = jwt.sign(
+            { userId: newUser._id },
+            process.env.JWT_SECRET as string,
+            { expiresIn: '1d' }
+        );
+        console.log("Token generated successfully:", !!token);
+
+        // Cookie options (same as login)
+        const cookieOptions: {
+            httpOnly: boolean;
+            sameSite: "lax";
+            maxAge: number;
+            secure: boolean;
+        } = {
+            httpOnly: true,
+            sameSite: "lax",
+            maxAge: 24 * 60 * 60 * 1000,
+            secure: process.env.NODE_ENV === 'production',
+        };
+
+        console.log("Registration request received from:", req.headers.origin);
+        console.log("Setting cookie with options:", cookieOptions);
+
+        //  Return same structure as login
+        return res
+            .cookie("token", token, cookieOptions)
+            .status(201)
+            .json({
+                message: `Welcome ${newUser.username}! Account created successfully.`,
+                user: userData,
+                token: token,
+                success: true
+            });
+
     } catch (error) {
         console.log("User creation Error", error);
         return res.status(500).json({
             error: "User not created",
             success: false
-        })
+        });
     }
 };
 
