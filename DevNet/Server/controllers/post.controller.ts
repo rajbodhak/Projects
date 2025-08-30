@@ -1,63 +1,34 @@
-import sharp from "sharp";
 import { Request, Response } from "express";
-import cloudinary from "../utils/cloudinary.ts";
-import Post from "../models/post.model.ts";
-import User from "../models/user.model.ts";
-import Comment from "../models/comment.model.ts";
-import mongoose from "mongoose";
-import { Multer } from "multer";
-import { getRecieverSocketId, io } from "../socket/socket.ts";
+import { postService } from "../services/post.services.ts";
 
-interface AuthenticatedRequest extends Request {
+// Interface for authenticated requests - avoid extending Request directly
+interface AuthenticatedRequest extends Omit<Request, 'file'> {
     id?: string;
-    file?: Express.Multer.File;
-};
+    file?: {
+        fieldname: string;
+        originalname: string;
+        encoding: string;
+        mimetype: string;
+        buffer: Buffer;
+        size: number;
+    };
+}
 
-export const addNewPost = async (req: AuthenticatedRequest, res: Response) => {
+// Add new post
+export const addNewPost = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
         const userId = req.id;
+        if (!userId) {
+            return res.status(401).json({
+                error: "User not authenticated",
+                success: false
+            });
+        }
+
         const image = req.file;
         const { content } = req.body;
 
-        if (!content) {
-            return res.status(401).json({ error: "Content is required", success: false });
-        }
-
-        let imageUrl: string | undefined;
-
-        if (image) {
-            // Optimize Image using Sharp
-            const optimizeImageBuffer = await sharp(image.buffer)
-                .resize({ width: 800, height: 800, fit: "inside" })
-                .toFormat("webp", { quality: 80 })
-                .toBuffer();
-
-            // Convert to base64
-            const fileUri = `data:image/webp;base64,${optimizeImageBuffer.toString("base64")}`;
-
-            // Upload to Cloudinary
-            const cloudResponse = await cloudinary.uploader.upload(fileUri, { resource_type: "image" });
-
-            imageUrl = cloudResponse.secure_url;
-        }
-
-        const post = await Post.create({
-            content,
-            image: imageUrl || null,
-            user: userId
-        });
-
-        const user = await User.findById(userId);
-        if (user) {
-            user.posts.push(post._id as mongoose.Types.ObjectId);
-            await user.save();
-        }
-
-        // Populate User Data
-        await post.populate({ path: "user", select: "-password" });
-
-        //Emit socket for real time update
-        io.emit('newPost', post)
+        const post = await postService.createPost(userId, { content }, image);
 
         return res.status(201).json({
             post,
@@ -65,73 +36,30 @@ export const addNewPost = async (req: AuthenticatedRequest, res: Response) => {
         });
 
     } catch (error) {
-        console.error(error);
+        console.error("AddNewPost Error:", error);
         return res.status(500).json({
-            error: "AddnewPost Internal Server Error",
+            error: error instanceof Error ? error.message : "AddNewPost Internal Server Error",
             success: false
         });
     }
 };
 
-// export const getAllPosts = async (req: Request, res: Response) => {
-//     try {
-//         const posts = await Post.find().sort({ createdAt: -1 })
-//             .populate({ path: 'user', select: 'username profilePicture' })
-//             .populate({
-//                 path: 'comments',
-//                 options: { sort: { createdAt: -1 } },
-//                 populate: {
-//                     path: 'user',
-//                     select: 'username profilePicture',
-//                 }
-//             });
-//         return res.status(200).json({
-//             posts,
-//             success: true
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({
-//             error: "GetAllPosts Internal Server Error",
-//             success: false
-//         });
-//     }
-// };
-
-export const getAllPosts = async (req: Request, res: Response) => {
+// Get all posts with pagination
+export const getAllPosts = async (req: Request, res: Response): Promise<Response> => {
     try {
-        // Get the "cursor" - which is the number of posts to skip
         const skip = parseInt(req.query.skip as string) || 0;
         const limit = parseInt(req.query.limit as string) || 10;
 
-        // Get posts after the skip point
-        const posts = await Post.find()
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit + 1)
-            .populate({ path: 'user', select: 'username profilePicture' })
-            .populate({
-                path: 'comments',
-                options: { sort: { createdAt: -1 } },
-                populate: {
-                    path: 'user',
-                    select: 'username profilePicture',
-                }
-            });
-
-        // Check if there are more posts 
-        const hasMore = posts.length > limit;
-
-        // Remove the extra post we fetched just to check if there are more
-        const postsToSend = hasMore ? posts.slice(0, limit) : posts;
+        const result = await postService.getAllPosts({ skip, limit });
 
         return res.status(200).json({
-            posts: postsToSend,
-            hasMore,
+            posts: result.posts,
+            hasMore: result.hasMore,
             success: true
         });
+
     } catch (error) {
-        console.error(error);
+        console.error("GetAllPosts Error:", error);
         return res.status(500).json({
             error: "GetAllPosts Internal Server Error",
             success: false
@@ -139,26 +67,19 @@ export const getAllPosts = async (req: Request, res: Response) => {
     }
 };
 
-export const getPostsByUser = async (req: AuthenticatedRequest, res: Response) => {
+// Get posts by specific user
+export const getPostsByUser = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
         const userId = req.params.userId;
-        const posts = await Post.find({ user: userId }).sort({ createdAt: -1 })
-            .populate({ path: 'user', select: 'username profilePicture' })
-            .populate({
-                path: 'comments',
-                options: { sort: { createdAt: -1 } },
-                populate: {
-                    path: 'user',
-                    select: 'username profilePicture'
-                }
-            });
+        const posts = await postService.getPostsByUser(userId);
 
         return res.status(200).json({
             posts,
             success: true
-        })
+        });
+
     } catch (error) {
-        console.error(error);
+        console.error("GetPostsByUser Error:", error);
         return res.status(500).json({
             error: "GetPostsByUser Internal Server Error",
             success: false
@@ -166,281 +87,199 @@ export const getPostsByUser = async (req: AuthenticatedRequest, res: Response) =
     }
 };
 
-export const likePost = async (req: AuthenticatedRequest, res: Response) => {
+// Like a post
+export const likePost = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
         const userId = req.id;
+        if (!userId) {
+            return res.status(401).json({
+                error: "User not authenticated",
+                success: false
+            });
+        }
+
         const { postId } = req.params;
+        const result = await postService.likePost(userId, postId);
 
-        const post = await Post.findById(postId);
-        if (!post) {
-            return res.status(404).json({ error: "Post not available", success: false });
-        }
-
-        // Post like logic
-        await post.updateOne({ $addToSet: { likes: userId } });
-
-        // Socket.io logic for real-time update
-        const user = await User.findById(userId).select('name username profilePicture');
-        const postOwnerId = post.user ? post.user.toString() : null;
-
-        if (postOwnerId && postOwnerId !== userId) {
-            const postOwnerSocketId = getRecieverSocketId(postOwnerId);
-            if (postOwnerSocketId) {
-                const notification = {
-                    type: 'like',
-                    userId,
-                    userDetails: user,
-                    postId,
-                    message: 'Your post was liked'
-                };
-                io.to(postOwnerSocketId).emit('notification', notification);
-            }
-        }
-
-        return res.status(200).json({ success: true, message: "Post Liked Successfully" });
+        return res.status(200).json({
+            success: true,
+            message: result.message
+        });
 
     } catch (error) {
-        console.log("LikePost Internal Error", error);
+        console.log("LikePost Error:", error);
         return res.status(500).json({
-            error: "Like Post Internal Error",
+            error: error instanceof Error ? error.message : "Like Post Internal Error",
             success: false
         });
     }
 };
 
-
-export const dislikePost = async (req: AuthenticatedRequest, res: Response) => {
+// Dislike a post
+export const dislikePost = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
         const userId = req.id;
+        if (!userId) {
+            return res.status(401).json({
+                error: "User not authenticated",
+                success: false
+            });
+        }
+
         const { postId } = req.params;
+        const result = await postService.dislikePost(userId, postId);
 
-        const post = await Post.findById(postId);
-        if (!post) {
-            return res.status(404).json({ error: "Post not available", success: false });
-        }
-
-        // Remove like from the post
-        await post.updateOne({ $pull: { likes: userId } });
-
-        // Socket.io logic for real-time update
-        const user = await User.findById(userId).select('name username profilePicture');
-        const postOwnerId = post?.user ? post.user.toString() : null;
-
-        if (postOwnerId && postOwnerId !== userId) {
-            const postOwnerSocketId = getRecieverSocketId(postOwnerId);
-            if (postOwnerSocketId) {
-                const notification = {
-                    type: 'dislike',
-                    userId,
-                    userDetails: user,
-                    postId,
-                    message: 'Your post was Disliked'
-                };
-                io.to(postOwnerSocketId).emit('notification', notification);
-            }
-        }
-
-        return res.status(200).json({ success: true, message: "Post Disliked Successfully" });
+        return res.status(200).json({
+            success: true,
+            message: result.message
+        });
 
     } catch (error) {
-        console.log("Dislike Post Internal Error", error);
+        console.log("Dislike Post Error:", error);
         return res.status(500).json({
-            error: "Dislike Post Internal Error",
+            error: error instanceof Error ? error.message : "Dislike Post Internal Error",
             success: false
         });
     }
 };
 
-
-
-export const addComments = async (req: AuthenticatedRequest, res: Response) => {
+// Add comment to a post
+export const addComments = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
         const userId = req.id;
+        if (!userId) {
+            return res.status(401).json({
+                error: "User not authenticated",
+                success: false
+            });
+        }
+
         const { postId } = req.params;
         const { text } = req.body;
-        if (!text) return res.status(404).json({ error: "Text not found", success: false });
 
-        const post = await Post.findById(postId);
-        if (!post) return res.status(404).json({ error: "Post not found", success: false });
-
-        //Add comment logic
-        const comment = await Comment.create({
-            user: userId,
-            post: postId,
-            text
-        });
-
-        await comment.populate({ path: 'user', select: 'username profilePicture' });
-
-        post.comments.push(comment._id as mongoose.Types.ObjectId);
-        await post.save();
+        const result = await postService.addComment(userId, postId, { text });
 
         return res.status(200).json({
-            message: "Comment added successfully",
-            comment,
+            message: result.message,
+            comment: result.comment,
             success: true
-        })
+        });
 
     } catch (error) {
-        console.log("Add Comment on Post Internal Error", error);
+        console.log("Add Comment Error:", error);
         return res.status(500).json({
-            error: "Add Comment On Post Internal Error",
+            error: error instanceof Error ? error.message : "Add Comment Internal Error",
             success: false
-        })
+        });
     }
 };
 
-export const getCommentsByPosts = async (req: AuthenticatedRequest, res: Response) => {
+// Get comments for a post
+export const getCommentsByPosts = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
         const { postId } = req.params;
-        const post = await Post.findById(postId);
-        if (!post) return res.status(404).json({ error: "Post not found", success: false });
+        const result = await postService.getCommentsByPost(postId);
 
-        const comments = await Comment.find({ post: postId }).sort({ createdAt: -1 })
-            .populate('user', 'username profilePicture');
-
-        if (comments.length === 0) return res.status(200)
-            .json({
-                error: "Comments not found for this Post",
+        if (result.comments.length === 0) {
+            return res.status(200).json({
+                error: result.message,
                 success: true,
-
             });
+        }
 
         return res.status(200).json({
-            message: "Comments fetched successfully",
+            message: result.message,
             success: true,
-            comments
-        })
+            comments: result.comments
+        });
 
     } catch (error) {
-        console.log("GetCommentByPosts Error", error);
+        console.log("GetCommentByPosts Error:", error);
         return res.status(500).json({
-            error: "GetCommentByPosts Error",
+            error: error instanceof Error ? error.message : "GetCommentByPosts Error",
             success: false
-        })
+        });
     }
 };
 
-export const deletePost = async (req: AuthenticatedRequest, res: Response) => {
+// Delete a post
+export const deletePost = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
         const userId = req.id;
+        if (!userId) {
+            return res.status(401).json({
+                error: "User not authenticated",
+                success: false
+            });
+        }
+
         const { postId } = req.params;
-
-        const post = await Post.findById(postId);
-        if (!post) return res.status(404).json({ error: "Post not found", success: false });
-
-        if (post.user.toString() !== userId) return res.status(401).json({ error: "only user can delete", success: false });
-
-        //Delete Post
-        await Post.findByIdAndDelete(postId);
-
-        //remove post from posts list
-        let user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ error: "User not found", success: false });
-        }
-        user.posts = user.posts.filter(id => id.toString() !== postId);
-        await user.save();
-
-        //Delete comments of the post
-        await Comment.deleteMany({ post: postId });
+        const result = await postService.deletePost(userId, postId);
 
         return res.status(200).json({
-            message: "Post deleted successfully",
+            message: result.message,
             success: true
-        })
+        });
 
     } catch (error) {
-        console.log("Delete Post Internal Error", error);
+        console.log("Delete Post Error:", error);
         return res.status(500).json({
-            error: "Delete Post Internal Error",
+            error: error instanceof Error ? error.message : "Delete Post Internal Error",
             success: false
-        })
+        });
     }
 };
 
-export const bookmarkPost = async (req: AuthenticatedRequest, res: Response) => {
+// Toggle bookmark for a post
+export const bookmarkPost = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
         const userId = req.id;
+        if (!userId) {
+            return res.status(401).json({
+                error: "User not authenticated",
+                success: false
+            });
+        }
+
         const { postId } = req.params;
+        const result = await postService.toggleBookmark(userId, postId);
 
-        const post = await Post.findById(postId);
-        if (!post) return res.status(404).json({ error: "Post not found", success: false });
-
-        let user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ error: "User not found", success: false });
-        };
-
-        const postObjectId = post._id as unknown as mongoose.Types.ObjectId;
-        const postIdStr = postObjectId.toString();
-
-        // If already bookmarked then remove it
-        if (user.bookmarks.some(id => id.toString() === postIdStr)) {
-            user.bookmarks = user.bookmarks.filter(id => id.toString() !== postIdStr);
-            await user.save();
-            return res.status(200).json({
-                message: "bookmark removed successfully",
-                success: true
-            });
-        };
-
-        // Add the bookmark with proper type handling
-        user.bookmarks.push(postObjectId);
-        await user.save();
         return res.status(200).json({
-            message: "bookmark added successfully",
+            message: result.message,
             success: true
         });
 
     } catch (error) {
-        console.log("Bookmark Internal Error", error);
+        console.log("Bookmark Error:", error);
         return res.status(500).json({
-            error: "Post Bookmark Internal Error",
+            error: error instanceof Error ? error.message : "Post Bookmark Internal Error",
             success: false
         });
     }
 };
 
-export const getBookmarkedPostsByUser = async (req: AuthenticatedRequest, res: Response) => {
+// Get bookmarked posts by user
+export const getBookmarkedPostsByUser = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
         const userId = req.id;
-
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ error: "User not found", success: false });
-        }
-
-        // Check if there are any bookmarks
-        if (user.bookmarks.length === 0) {
-            return res.status(200).json({
-                posts: [],
-                success: true
+        if (!userId) {
+            return res.status(401).json({
+                error: "User not authenticated",
+                success: false
             });
         }
 
-        // Fetch all bookmarked posts with populated fields
-        const bookmarkedPosts = await Post.find({
-            _id: { $in: user.bookmarks }
-        }).sort({ createdAt: -1 })
-            .populate({ path: 'user', select: 'username profilePicture' })
-            .populate({
-                path: 'comments',
-                options: { sort: { createdAt: -1 } },
-                populate: {
-                    path: 'user',
-                    select: 'username profilePicture',
-                }
-            });
+        const posts = await postService.getBookmarkedPosts(userId);
 
         return res.status(200).json({
-            posts: bookmarkedPosts,
+            posts,
             success: true
         });
+
     } catch (error) {
-        console.log("GetBookmarkedPosts Internal Error", error);
+        console.log("GetBookmarkedPosts Error:", error);
         return res.status(500).json({
-            error: "GetBookmarkedPosts Internal Server Error",
+            error: error instanceof Error ? error.message : "GetBookmarkedPosts Internal Server Error",
             success: false
         });
     }

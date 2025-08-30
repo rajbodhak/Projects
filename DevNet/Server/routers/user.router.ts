@@ -3,7 +3,7 @@ import {
     register,
     login,
     logout,
-    getuser,
+    getUser,
     getSuggestedUsers,
     editUser,
     followOrUnfollow,
@@ -21,7 +21,7 @@ const router = express.Router();
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", logout);
-router.get("/user/:id", isAuthenticated, getuser);
+router.get("/user/:id", isAuthenticated, getUser);
 router.get("/suggested-users", isAuthenticated, getSuggestedUsers);
 router.get("/:id/profile", isAuthenticated, getProfile);
 router.put("/profile/edit", isAuthenticated, upload.single("profilePicture"), editUser);
