@@ -131,10 +131,15 @@ export class UserService {
         }
 
         // Verify password
+        if (!user.password) {
+            throw new Error("This account uses OAuth. Please login with Google/GitHub.");
+        }
+
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (!isPasswordCorrect) {
             throw new Error("Invalid credentials");
         }
+
 
         // Populate posts
         await user.populate({
