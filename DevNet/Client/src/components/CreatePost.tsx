@@ -4,6 +4,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import { API_BASE_URL } from "@/lib/apiConfig";
+import { toast } from "sonner";
 
 const CreatePost = () => {
     const [content, setContent] = useState('');
@@ -44,9 +45,11 @@ const CreatePost = () => {
                 setContent('');
                 setImage(null);
                 setPreview(null);
+                toast.success("Post Created!");
             }
         } catch (error) {
             console.log("Create Post Error in Client: ", error);
+            toast.error("Post creation error!")
         }
     };
 
