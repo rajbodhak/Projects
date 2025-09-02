@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
@@ -25,17 +25,24 @@ const Login = () => {
     const dispatch = useDispatch();
     const [searchParams] = useSearchParams();
 
+    // Prevent double auth check
+    const authCheckRef = useRef(false);
+
     // Check for OAuth success/error in URL params
     useEffect(() => {
         const authStatus = searchParams.get('auth');
         const error = searchParams.get('error');
 
-        if (authStatus === 'success') {
-            // OAuth login successful - check if user is authenticated
+        if (authStatus === 'success' && !authCheckRef.current) {
+            authCheckRef.current = true;
+            // Clear URL params immediately to prevent re-runs
+            window.history.replaceState({}, '', window.location.pathname);
             checkAuthStatus();
         } else if (error) {
             toast.error(error);
             setLoginError(error);
+            // Clear error param too
+            window.history.replaceState({}, '', window.location.pathname);
         }
     }, [searchParams]);
 
@@ -247,7 +254,6 @@ const Login = () => {
                         <OAuthButtons isLoading={isLoading} />
                     </div>
                 </div>
-
 
                 <div className="px-8 py-4 bg-gray-50 mt-6 border-t border-gray-100">
                     <p className="text-center text-gray-600 text-sm">
