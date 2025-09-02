@@ -9,52 +9,52 @@ const generateToken = (userId: string): string => {
     });
 };
 
-// Google OAuth Success
+// Consistent cookie options for both Google and GitHub
+const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
+};
+
 export const googleSuccess = async (req: Request, res: Response) => {
     try {
         if (!req.user) {
+            console.error('Google OAuth: No user found in request');
             return res.redirect(`${process.env.CLIENT_URL}/login?error=Authentication failed`);
         }
 
         const user = req.user as any;
         const token = generateToken(user._id);
 
-        // Set HTTP-only cookie
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
-        });
+        res.cookie('token', token, cookieOptions);
 
-        // Redirect to frontend with success
-        res.redirect(`${process.env.CLIENT_URL}/home?auth=success`);
+        // Consistent redirect to login page with success parameter
+        res.redirect(`${process.env.CLIENT_URL}/login?auth=success`);
     } catch (error) {
         console.error('Google OAuth success error:', error);
         res.redirect(`${process.env.CLIENT_URL}/login?error=Authentication failed`);
     }
 };
 
-// GitHub OAuth Success
+// GitHub OAuth Success - Fixed to be consistent with Google
 export const githubSuccess = async (req: Request, res: Response) => {
     try {
         if (!req.user) {
+            console.error('GitHub OAuth: No user found in request');
             return res.redirect(`${process.env.CLIENT_URL}/login?error=Authentication failed`);
         }
 
         const user = req.user as any;
+        console.log('GitHub OAuth success for user:', user.username);
+
         const token = generateToken(user._id);
 
         // Set HTTP-only cookie
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
-        });
+        res.cookie('token', token, cookieOptions);
 
-        // Redirect to frontend with success
-        res.redirect(`${process.env.CLIENT_URL}/home?auth=success`);
+        // Consistent redirect to login page with success parameter (same as Google)
+        res.redirect(`${process.env.CLIENT_URL}/login?auth=success`);
     } catch (error) {
         console.error('GitHub OAuth success error:', error);
         res.redirect(`${process.env.CLIENT_URL}/login?error=Authentication failed`);
@@ -63,6 +63,7 @@ export const githubSuccess = async (req: Request, res: Response) => {
 
 // OAuth failure
 export const oauthFailure = (req: Request, res: Response) => {
+    console.error('OAuth failure occurred');
     res.redirect(`${process.env.CLIENT_URL}/login?error=Authentication failed`);
 };
 

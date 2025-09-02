@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { setAuthUser } from '@/redux/authSlice';
+import { setAuthUser, logoutUser } from '@/redux/authSlice';
 import { API_BASE_URL } from '@/lib/apiConfig';
+import OAuthButtons from '@/components/OAuthButtons';
 
 const Login = () => {
     const [input, setInput] = useState({
@@ -22,6 +23,62 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
+    const [searchParams] = useSearchParams();
+
+    // Check for OAuth success/error in URL params
+    useEffect(() => {
+        const authStatus = searchParams.get('auth');
+        const error = searchParams.get('error');
+
+        if (authStatus === 'success') {
+            // OAuth login successful - check if user is authenticated
+            checkAuthStatus();
+        } else if (error) {
+            toast.error(error);
+            setLoginError(error);
+        }
+    }, [searchParams]);
+
+    // Complete cleanup of all authentication state
+    const clearAllAuthState = () => {
+        // Clear Redux state
+        dispatch(logoutUser());
+
+        // Clear all possible localStorage keys
+        localStorage.removeItem('authUser');
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+
+        console.log('All authentication state cleared');
+    };
+
+    const checkAuthStatus = async () => {
+        try {
+            // FIRST: Complete cleanup of existing auth state
+            clearAllAuthState();
+
+            // Small delay to ensure cleanup is complete
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // THEN: Get the current user from backend
+            const response = await axios.get(`${API_BASE_URL}/api/auth/me`, {
+                withCredentials: true
+            });
+
+            if (response.data.success) {
+                // Set the user in Redux
+                dispatch(setAuthUser(response.data.user));
+
+                const origin = location.state?.from?.pathname || '/home';
+                navigate(origin, { replace: true });
+                toast.success('Login successful!');
+            }
+        } catch (error) {
+            console.error('Auth check failed:', error);
+            // If auth check fails, make sure everything is cleared
+            clearAllAuthState();
+        }
+    };
 
     const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -68,18 +125,10 @@ const Login = () => {
             setIsLoading(true);
             setLoginError("");
 
-            // const backendUrl = window.location.hostname === 'localhost'
-            //     ? 'http://localhost:8000'
-            //     : `http://${window.location.hostname}:8000`;
-
             try {
-                console.log(`Making request to: ${API_BASE_URL}/api/users/login`);
-                console.log('Request options:', {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+                // Clear existing auth state before new login
+                clearAllAuthState();
+
                 const response = await axios.post(`${API_BASE_URL}/api/users/login`, {
                     email: input.email,
                     password: input.password
@@ -91,19 +140,21 @@ const Login = () => {
                 });
 
                 if (response.data.success) {
-                    localStorage.setItem('token', response.data.token);
                     dispatch(setAuthUser(response.data.user));
 
                     // Redirect to the previous page or home
                     const origin = location.state?.from?.pathname || '/home';
                     navigate(origin, { replace: true });
 
-                    toast.success(response.data.message)
+                    toast.success(response.data.message);
                 }
                 setInput({ email: "", password: "" });
 
-            } catch (error) {
-                console.log("Login Error: ", error)
+            } catch (error: any) {
+                console.log("Login Error: ", error);
+                const errorMessage = error.response?.data?.message || "Login failed. Please try again.";
+                setLoginError(errorMessage);
+                toast.error(errorMessage);
             } finally {
                 setIsLoading(false);
             }
@@ -152,9 +203,6 @@ const Login = () => {
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                                     Password
                                 </label>
-                                {/* <Link to="/forgot-password" className="text-sm text-amber-600 hover:text-amber-800">
-                                    Forgot password?
-                                </Link> */}
                             </div>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -193,7 +241,13 @@ const Login = () => {
                             {isLoading ? "Signing in..." : "Sign in"}
                         </button>
                     </form>
+
+                    {/* OAuth Buttons */}
+                    <div className="mt-6">
+                        <OAuthButtons isLoading={isLoading} />
+                    </div>
                 </div>
+
 
                 <div className="px-8 py-4 bg-gray-50 mt-6 border-t border-gray-100">
                     <p className="text-center text-gray-600 text-sm">

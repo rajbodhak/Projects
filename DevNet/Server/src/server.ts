@@ -2,6 +2,8 @@ import express, { urlencoded } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 import "../config/passport.ts"
 import connectDB from "../config/db.ts";
 import userRoutes from "../routers/user.router.ts";
@@ -19,9 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 
-app.use(passport.initialize());
-app.use(passport.session());
-
+// CORS configuration
 const corsOptions = {
     origin: true,
     credentials: true,
@@ -29,6 +29,26 @@ const corsOptions = {
     allowedHeaders: ["Content-Type", "Authorization"]
 };
 app.use(cors(corsOptions));
+
+// Session middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'your-fallback-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.DATABASE_URL || process.env.MONGO_URI
+    }),
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+        sameSite: 'lax'
+    }
+}));
+
+// Passport middleware - AFTER session
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get("/", (req, res) => {
     res.send("Hello this is backend");

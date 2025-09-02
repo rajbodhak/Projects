@@ -11,7 +11,7 @@ interface AuthenticatedRequest extends Request {
 const getCookieOptions = () => ({
     httpOnly: true,
     sameSite: "lax" as const,
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days (matching your OAuth expiry)
     secure: process.env.NODE_ENV === 'production',
 });
 
@@ -63,15 +63,15 @@ export const register = async (req: Request, res: Response): Promise<Response> =
         console.log("Token generated successfully:", !!result.token);
         console.log("Registration request received from:", req.headers.origin);
 
-        // Set cookie and return response
+        // Set cookie and return response WITHOUT token in body
         return res
             .cookie("token", result.token, getCookieOptions())
             .status(201)
             .json({
                 message: result.message,
                 user: result.user,
-                token: result.token,
                 success: true
+                // NO token in response body - security improvement
             });
 
     } catch (error) {
@@ -102,14 +102,14 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
         console.log("Token generated successfully:", !!result.token);
         console.log("Login request received from:", req.headers.origin);
 
-        // Set cookie and return response
+        // Set cookie and return response WITHOUT token in body
         return res
             .cookie("token", result.token, getCookieOptions())
             .json({
                 message: result.message,
                 user: result.user,
-                token: result.token,
                 success: true
+                // NO token in response body - security improvement
             });
 
     } catch (error) {
@@ -127,8 +127,8 @@ export const logout = async (req: Request, res: Response): Promise<Response> => 
         return res
             .cookie('token', '', {
                 httpOnly: true,
-                sameSite: "strict",
-                secure: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === 'production',
                 maxAge: 0
             })
             .json({

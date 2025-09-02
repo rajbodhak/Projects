@@ -7,11 +7,18 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+interface GitHubEmail {
+    email: string;
+    primary: boolean;
+    verified: boolean;
+    visibility: string | null;
+}
+
 //Jwt Strategy For API authentication
 passport.use(new jwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET!,
-}, async (payload, done) => {
+}, async (payload: any, done: (error: any, user?: any) => void) => {
     try {
         const user = await User.findById(payload.userId).select("-password");
         if (user) {
@@ -19,7 +26,7 @@ passport.use(new jwtStrategy({
         }
         return done(null, false);
     } catch (error) {
-        return done(error, false)
+        return done(error, false);
     }
 }));
 
@@ -94,9 +101,30 @@ passport.use(new GoogleStrategy({
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID!,
     clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    callbackURL: "/api/auth/github/callback"
-}, async (accessToken, refreshToken, profile, done) => {
+    callbackURL: "/api/auth/github/callback",
+    scope: ['user:email']
+}, async (accessToken: string, refreshToken: string, profile: any, done: (error: any, user?: any) => void) => {
     try {
+        // Fetch user emails from GitHub API
+        const emailResponse = await fetch('https://api.github.com/user/emails', {
+            headers: {
+                Authorization: `token ${accessToken}`,
+                Accept: 'application/vnd.github.v3+json',
+                'User-Agent': 'Your-App-Name'
+            }
+        });
+
+        if (!emailResponse.ok) {
+            throw new Error(`GitHub email API error: ${emailResponse.status}`);
+        }
+
+        const emails: GitHubEmail[] = await emailResponse.json() as GitHubEmail[];
+        const primaryEmail = emails.find((email: GitHubEmail) => email.primary && email.verified);
+        const email = primaryEmail ? primaryEmail.email : null;
+
+        // If no email found, create a placeholder
+        const userEmail = email || `github-${profile.id}@users.noreply.github.com`;
+
         // Check if user already exists with this GitHub ID
         let user = await User.findOne({
             provider: 'github',
@@ -108,17 +136,17 @@ passport.use(new GitHubStrategy({
         }
 
         // Check if user exists with same email but different provider
-        const existingUser = await User.findOne({ email: profile.emails?.[0]?.value });
+        const existingUser = await User.findOne({ email: userEmail });
 
         if (existingUser) {
             // Link the GitHub account to existing user
             existingUser.provider = 'github';
             existingUser.providerId = profile.id;
-            existingUser.isEmailVerified = true;
+            existingUser.isEmailVerified = !!email;
 
             // Update name, profile picture, and github URL if not set
             if (!existingUser.name || existingUser.name === " ") {
-                existingUser.name = profile.displayName || profile.username || profile.emails?.[0]?.value.split('@')[0];
+                existingUser.name = profile.displayName || profile.username || userEmail.split('@')[0];
             }
             if (!existingUser.profilePicture && profile.photos?.[0]) {
                 existingUser.profilePicture = profile.photos[0].value;
@@ -133,7 +161,7 @@ passport.use(new GitHubStrategy({
 
         // Generate unique username
         let baseUsername = profile.username || profile.displayName?.replace(/\s+/g, '').toLowerCase() ||
-            profile.emails?.[0]?.value.split('@')[0];
+            userEmail.split('@')[0];
         let username = baseUsername;
         let counter = 1;
 
@@ -146,21 +174,21 @@ passport.use(new GitHubStrategy({
         // Create new user
         user = await User.create({
             username,
-            email: profile.emails?.[0]?.value,
-            name: profile.displayName || profile.username || profile.emails?.[0]?.value.split('@')[0],
+            email: userEmail,
+            name: profile.displayName || profile.username || userEmail.split('@')[0],
             profilePicture: profile.photos?.[0]?.value || '',
             github: profile.profileUrl || `https://github.com/${profile.username}`,
             provider: 'github',
             providerId: profile.id,
-            isEmailVerified: true
+            isEmailVerified: !!email
         });
 
         return done(null, user);
     } catch (error) {
-        return done(error as Error, undefined);
+        console.error('GitHub OAuth error:', error);
+        return done(error as Error);
     }
 }));
-
 // Serialize user for session
 passport.serializeUser((user: any, done) => {
     done(null, user._id);

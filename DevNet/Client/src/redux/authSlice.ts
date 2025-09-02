@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@/lib/types";
 
+
 interface AuthState {
     user: User | null;
     userProfile: User | null;
@@ -22,7 +23,11 @@ export const authSlice = createSlice({
         //actions
         setAuthUser: (state, action: PayloadAction<User | null>) => {
             state.user = action.payload;
-            localStorage.setItem("authUser", JSON.stringify(action.payload));
+            if (action.payload) {
+                localStorage.setItem("authUser", JSON.stringify(action.payload));
+            } else {
+                localStorage.removeItem("authUser");
+            }
         },
         setUserProfile: (state, action: PayloadAction<User | null>) => {
             state.userProfile = action.payload;
@@ -32,10 +37,13 @@ export const authSlice = createSlice({
         },
         logoutUser: (state) => {
             state.user = null;
+            state.userProfile = null;
+            state.chatUser = null;
             localStorage.removeItem("authUser");
         }
     }
 });
 
-export const { setAuthUser, setUserProfile, setChatUser } = authSlice.actions;
+// Make sure to export logoutUser
+export const { setAuthUser, setUserProfile, setChatUser, logoutUser } = authSlice.actions;
 export default authSlice.reducer;

@@ -16,6 +16,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { Rootstate } from './redux/store';
 import { useEffect } from 'react';
+import { setAuthUser } from './redux/authSlice';
 import { setSocketConnected, setSocketId } from './redux/socketSlice';
 import socketService from './services/socketService';
 import { setOnlineUsers } from './redux/chatSlice';
@@ -27,15 +28,34 @@ const createProtectedRoute = (element: React.ReactNode) => (
   </AuthGuard>
 );
 
+// Component to redirect authenticated users away from auth pages
+const RedirectIfAuthenticated = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useSelector((state: Rootstate) => state.auth);
+
+  if (user) {
+    return <Navigate to="/home" replace />;
+  }
+
+  return <>{children}</>;
+};
+
 const browserRouter = createBrowserRouter([
-  // Public routes
+  // Public routes - redirect to home if already authenticated
   {
     path: '/signup',
-    element: <SignUp />,
+    element: (
+      <RedirectIfAuthenticated>
+        <SignUp />
+      </RedirectIfAuthenticated>
+    ),
   },
   {
     path: '/login',
-    element: <Login />,
+    element: (
+      <RedirectIfAuthenticated>
+        <Login />
+      </RedirectIfAuthenticated>
+    ),
   },
   // Protected routes wrapped inside AuthGuard
   {
@@ -86,6 +106,21 @@ function App() {
   const { user } = useSelector((state: Rootstate) => state.auth);
   const dispatch = useDispatch();
 
+  // Initialize auth from localStorage on app start
+  useEffect(() => {
+    const storedUser = localStorage.getItem("authUser");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        dispatch(setAuthUser(parsedUser));
+      } catch (error) {
+        console.error("Error loading user from localStorage:", error);
+        localStorage.removeItem("authUser");
+      }
+    }
+  }, [dispatch]);
+
+  // Socket connection logic
   useEffect(() => {
     if (user) {
       const socket = socketService.connect(user._id);
@@ -117,7 +152,9 @@ function App() {
     }
   }, [user, dispatch]);
 
-  return <RouterProvider router={browserRouter} />;
+  return (
+    <RouterProvider router={browserRouter} />
+  );
 }
 
 export default App;

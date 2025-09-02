@@ -1,17 +1,20 @@
-import { Home, Search, Bell, Mail, Bookmark, User, Sun, Moon } from "lucide-react";
+import { Home, Search, Bell, Mail, Bookmark, User, Sun, Moon, LogOut } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import { markAllNotificationsAsRead } from "@/redux/rtnSlice";
 import { toggleTheme } from "@/redux/themeSlice";
+import Logout from "./Logout";
+import { useState } from "react";
 
 const LeftSideBar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const user = useSelector((state: Rootstate) => state.auth.user);
     const { notifications } = useSelector((state: Rootstate) => state.realTimeNotification);
-    const { mode } = useSelector((state: Rootstate) => state.theme); // Get current theme
+    const { mode } = useSelector((state: Rootstate) => state.theme);
     const dispatch = useDispatch();
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     const sideBarItems = [
         { icon: <Home size={20} />, itemName: "Home", path: "/home" },
@@ -34,11 +37,21 @@ const LeftSideBar = () => {
         dispatch(toggleTheme());
     };
 
+    const handleLogoutClick = () => {
+        setIsLogoutModalOpen(true);
+    };
+
     // Count of unread notifications
     const unreadNotificationsCount = notifications.filter(notification => !notification.isRead).length;
 
     return (
         <>
+            {/* Logout Modal */}
+            <Logout
+                isOpen={isLogoutModalOpen}
+                onCancel={() => setIsLogoutModalOpen(false)}
+            />
+
             {/* Desktop sidebar (left side) - only visible on lg screens and above */}
             <div className="lg:flex flex-col fixed top-0 left-0 z-20 w-[20%] h-screen bg-white border-r border-gray-200 shadow-md dark:bg-gray-900 dark:border-gray-700 dark:text-white hidden">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -78,6 +91,7 @@ const LeftSideBar = () => {
 
                 {/* Theme toggle button positioned absolutely at the bottom */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+
                     <div
                         className="flex items-center px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-gray-100 text-gray-600 dark:hover:bg-gray-800 dark:text-gray-300"
                         onClick={handleThemeToggle}
@@ -86,6 +100,15 @@ const LeftSideBar = () => {
                             {mode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
                         </div>
                         <span className="font-medium">{mode === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+                    </div>
+                    <div
+                        className="flex items-center px-4 py-3 border rounded-lg cursor-pointer transition-colors duration-200 hover:bg-gray-100 text-gray-600 dark:hover:bg-gray-800 dark:text-gray-300"
+                        onClick={handleLogoutClick} // Changed to handleLogoutClick
+                    >
+                        <div className="mr-4 text-gray-400">
+                            <LogOut size={20} />
+                        </div>
+                        <span className="font-medium">Logout</span>
                     </div>
                 </div>
             </div>
