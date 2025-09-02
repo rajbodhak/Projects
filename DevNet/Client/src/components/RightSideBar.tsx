@@ -22,11 +22,11 @@ const RightSideBar = () => {
     }, []);
 
     return (
-        <div className="fixed top-0 right-0 z-10 hidden md:block lg:w-96 h-screen bg-white  dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 shadow-md">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="w-full h-full">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-900 z-10">
                 <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Who to Follow</h1>
             </div>
-            <div className='px-8 mt-2'>
+            <div className='px-8 mt-2 pb-6'>
                 {userData ? (
                     userData.map((user) => (
                         <SuggestedUserCard key={user._id} userinfo={user} />
