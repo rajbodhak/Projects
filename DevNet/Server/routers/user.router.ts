@@ -12,8 +12,8 @@ import {
     getFollowingUsers,
     validateToken,
     searchUsers
-} from "../controllers/user.controller";
-import isAuthenticated from "../middlewares/isAuthenticated";
+} from "../controllers/user.controller.js";
+import isAuthenticated from "../middlewares/isAuthenticated.js";
 import upload from "../utils/multer";
 
 const router = express.Router();

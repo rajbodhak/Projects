@@ -4,13 +4,13 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-import "../config/passport.ts"
-import connectDB from "../config/db";
-import userRoutes from "../routers/user.router";
-import postRoutes from "../routers/post.router";
-import messageRoutes from "../routers/message.router";
-import authRoutes from "../routers/auth.router";
-import { app, server } from "../socket/socket"
+import "../config/passport.js"
+import connectDB from "../config/db.js";
+import userRoutes from "../routers/user.router.js";
+import postRoutes from "../routers/post.router.js";
+import messageRoutes from "../routers/message.router.js";
+import authRoutes from "../routers/auth.router.js";
+import { app, server } from "../socket/socket.js"
 import passport from "passport";
 
 // Load environment variables first

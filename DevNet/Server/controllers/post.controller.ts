@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { postService } from "../services/post.services";
+import { postService } from "../services/post.services.js";
 
 // Interface for authenticated requests - avoid extending Request directly
 interface AuthenticatedRequest extends Omit<Request, 'file'> {

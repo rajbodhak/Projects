@@ -10,9 +10,9 @@ import {
     getPostsByUser,
     likePost,
     getBookmarkedPostsByUser,
-} from "../controllers/post.controller";
-import isAuthenticated from "../middlewares/isAuthenticated";
-import upload from "../utils/multer";
+} from "../controllers/post.controller.js";
+import isAuthenticated from "../middlewares/isAuthenticated.js";
+import upload from "../utils/multer.js";
 
 const router = express.Router();
 

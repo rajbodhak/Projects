@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { MessageService } from "../services/message.services";
+import { MessageService } from "../services/message.services.js";
 
 interface AuthenticatedRequest extends Request {
     id?: string;

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { userService } from "../services/user.services";
+import { userService } from "../services/user.services.js";
 
 // Interface for authenticated requests
 interface AuthenticatedRequest extends Request {
