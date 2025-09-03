@@ -107,7 +107,7 @@ export const likePost = async (req: AuthenticatedRequest, res: Response): Promis
         });
 
     } catch (error) {
-        console.log("LikePost Error:", error);
+        console.error("LikePost Error:", error);
         return res.status(500).json({
             error: error instanceof Error ? error.message : "Like Post Internal Error",
             success: false
@@ -135,7 +135,7 @@ export const dislikePost = async (req: AuthenticatedRequest, res: Response): Pro
         });
 
     } catch (error) {
-        console.log("Dislike Post Error:", error);
+        console.error("Dislike Post Error:", error);
         return res.status(500).json({
             error: error instanceof Error ? error.message : "Dislike Post Internal Error",
             success: false
@@ -166,7 +166,7 @@ export const addComments = async (req: AuthenticatedRequest, res: Response): Pro
         });
 
     } catch (error) {
-        console.log("Add Comment Error:", error);
+        console.error("Add Comment Error:", error);
         return res.status(500).json({
             error: error instanceof Error ? error.message : "Add Comment Internal Error",
             success: false
@@ -194,7 +194,7 @@ export const getCommentsByPosts = async (req: AuthenticatedRequest, res: Respons
         });
 
     } catch (error) {
-        console.log("GetCommentByPosts Error:", error);
+        console.error("GetCommentByPosts Error:", error);
         return res.status(500).json({
             error: error instanceof Error ? error.message : "GetCommentByPosts Error",
             success: false
@@ -222,7 +222,7 @@ export const deletePost = async (req: AuthenticatedRequest, res: Response): Prom
         });
 
     } catch (error) {
-        console.log("Delete Post Error:", error);
+        console.error("Delete Post Error:", error);
         return res.status(500).json({
             error: error instanceof Error ? error.message : "Delete Post Internal Error",
             success: false
@@ -250,7 +250,7 @@ export const bookmarkPost = async (req: AuthenticatedRequest, res: Response): Pr
         });
 
     } catch (error) {
-        console.log("Bookmark Error:", error);
+        console.error("Bookmark Error:", error);
         return res.status(500).json({
             error: error instanceof Error ? error.message : "Post Bookmark Internal Error",
             success: false
@@ -277,7 +277,7 @@ export const getBookmarkedPostsByUser = async (req: AuthenticatedRequest, res: R
         });
 
     } catch (error) {
-        console.log("GetBookmarkedPosts Error:", error);
+        console.error("GetBookmarkedPosts Error:", error);
         return res.status(500).json({
             error: error instanceof Error ? error.message : "GetBookmarkedPosts Internal Server Error",
             success: false

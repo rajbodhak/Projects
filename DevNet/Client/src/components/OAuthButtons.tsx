@@ -23,40 +23,27 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ isLoading = false, classNam
         e.stopPropagation();
 
         if (isLoading) return;
-        console.log('Google OAuth URL:', `${API_BASE_URL}/api/auth/google`);
         window.location.href = `${API_BASE_URL}/api/auth/google`;
     };
 
     const handleGithubLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
-        console.log('=== GitHub Button Clicked ===');
-        console.log('Event:', e);
-        console.log('Event type:', e.type);
-        console.log('Target:', e.target);
-        console.log('Current target:', e.currentTarget);
 
         e.preventDefault();
         e.stopPropagation();
 
         if (isLoading) {
-            console.log('Blocked: isLoading is true');
             return;
         }
-
-        console.log('=== GitHub OAuth Debug ===');
-        console.log('Button clicked at:', new Date().toISOString());
-
         const githubUrl = `${API_BASE_URL}/api/auth/github`;
-        console.log('GitHub OAuth URL:', githubUrl);
+
 
         // Let's try a completely different approach
-        console.log('Creating a temporary link element...');
         const link = document.createElement('a');
         link.href = githubUrl;
         link.target = '_self';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        console.log('Link click executed');
     };
 
     return (

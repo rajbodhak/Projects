@@ -46,7 +46,6 @@ export const githubSuccess = async (req: Request, res: Response) => {
         }
 
         const user = req.user as any;
-        console.log('GitHub OAuth success for user:', user.username);
 
         const token = generateToken(user._id);
 

@@ -29,7 +29,7 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
           setIsFollowing(response.data.isFollowing);
         }
       } catch (error) {
-        console.log("Follow status check error:", error);
+        console.error("Follow status check error:", error);
       }
     };
 
@@ -53,7 +53,7 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
         setIsFollowing(response.data.isFollowing);
       }
     } catch (error) {
-      console.log("Follow Client Error: ", error);
+      console.error("Follow Client Error: ", error);
     } finally {
       setIsLoading(false);
     }
@@ -62,7 +62,7 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
     if (userinfo._id) {
       navigate(`/${userinfo._id}`);
     } else {
-      console.log("User ID is undefined");
+      console.error("User ID is undefined");
     }
   };
 

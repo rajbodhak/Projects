@@ -15,11 +15,10 @@ const Bookmarks = () => {
                 setIsLoading(true);
                 const response = await axios.get(`${API_BASE_URL}/api/posts/bookmarks`, { withCredentials: true });
                 if (response.data.success) {
-                    console.log("Bookmarks", response.data.posts);
                     setBookmarkedPosts(response.data.posts);
                 }
             } catch (error) {
-                console.log("BookmarkedPost Fetching Error in Client: ", error);
+                console.error("BookmarkedPost Fetching Error in Client: ", error);
             } finally {
                 setIsLoading(false);
             }

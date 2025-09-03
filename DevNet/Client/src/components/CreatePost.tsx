@@ -39,7 +39,6 @@ const CreatePost = () => {
             const response = await axios.post(`${API_BASE_URL}/api/posts/add-post`, formData, { withCredentials: true });
 
             if (response.data.success) {
-                console.log("Post created successfully");
 
                 // Reset form
                 setContent('');
@@ -48,7 +47,6 @@ const CreatePost = () => {
                 toast.success("Post Created!");
             }
         } catch (error) {
-            console.log("Create Post Error in Client: ", error);
             toast.error("Post creation error!")
         }
     };

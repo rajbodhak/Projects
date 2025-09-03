@@ -15,7 +15,7 @@ const RightSideBar = () => {
                     setUserData(response.data.users);
                 }
             } catch (error) {
-                console.log("Suggested User Fetch Error in Client Side: ", error);
+                console.error("Suggested User Fetch Error in Client Side: ", error);
             }
         };
         fetchData();

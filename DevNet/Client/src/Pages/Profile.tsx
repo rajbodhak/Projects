@@ -22,12 +22,11 @@ const Profile = () => {
                     `${API_BASE_URL}/api/users/user/${user._id}`,
                     { withCredentials: true }
                 );
-                console.log(response);
                 if (response.data.success) {
                     setUserData(response.data.user);
                 }
             } catch (err) {
-                console.log("User data fetching error:", err);
+                console.error("User data fetching error:", err);
                 setError("Failed to load user data | Login session expired");
                 navigate("/login");
             } finally {

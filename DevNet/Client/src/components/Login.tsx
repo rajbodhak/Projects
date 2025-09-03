@@ -56,7 +56,6 @@ const Login = () => {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
 
-        console.log('All authentication state cleared');
     };
 
     const checkAuthStatus = async () => {
@@ -158,7 +157,6 @@ const Login = () => {
                 setInput({ email: "", password: "" });
 
             } catch (error: any) {
-                console.log("Login Error: ", error);
                 const errorMessage = error.response?.data?.message || "Login failed. Please try again.";
                 setLoginError(errorMessage);
                 toast.error(errorMessage);

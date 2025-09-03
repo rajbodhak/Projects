@@ -48,7 +48,6 @@ const SignUp = () => {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
 
-        console.log('All authentication state cleared');
     };
 
     const checkAuthStatus = async () => {

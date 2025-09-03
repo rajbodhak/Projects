@@ -12,10 +12,9 @@ const useGetProfileById = (userId: string) => {
                 const response = await axios.get(`${API_BASE_URL}/api/users/${userId}/profile`, { withCredentials: true });
                 if (response.data.success) {
                     dispatch(setUserProfile(response.data.user));
-                    console.log("The User Profile Data: ", response.data);
                 }
             } catch (error) {
-                console.log("Getting user profile Error", error)
+                console.error("Getting user profile Error", error)
             }
         }
         fetchUserProfile();

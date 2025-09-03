@@ -91,7 +91,6 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
 
     const handleBookmark = async () => {
         if (!postData?._id || !user) {
-            console.log("Post ID or user is missing");
             return;
         }
 
@@ -129,17 +128,14 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
                 toast.success(response.data.message)
             }
         } catch (error) {
-            console.log("Bookmark toggling error", error);
+            console.error("Bookmark toggling error", error);
         }
     };
 
     const handleDelete = async () => {
         if (!postData?._id) {
-            console.log("Post ID is missing");
             return;
         }
-        // const confirmDelete = window.confirm("Are you sure you want to delete this post?");
-        // if (!confirmDelete) return;
         try {
             const response = await axios.delete(`/api/posts/delete/${postData._id}`, { withCredentials: true });
 
@@ -148,7 +144,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
             }
             setIsDelModalOpen(false);
         } catch (error) {
-            console.log("Delete toggling error", error);
+            console.error("Delete toggling error", error);
         }
     };
 
@@ -159,7 +155,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
         }
 
         setPostData(prev => {
-            if (!prev) return prev; // Prevent null errors
+            if (!prev) return prev;
 
             return {
                 ...prev,
@@ -191,7 +187,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
         if (post?.user?._id) {
             navigate(`/${post.user._id}`);
         } else {
-            console.log("User ID is undefined");
+            console.error("User ID is undefined");
         }
     };
 

@@ -59,10 +59,6 @@ export const register = async (req: Request, res: Response): Promise<Response> =
 
         // Call service
         const result = await userService.registerUser({ username, email, password, name });
-
-        console.log("Token generated successfully:", !!result.token);
-        console.log("Registration request received from:", req.headers.origin);
-
         // Set cookie and return response WITHOUT token in body
         return res
             .cookie("token", result.token, getCookieOptions())
@@ -75,7 +71,7 @@ export const register = async (req: Request, res: Response): Promise<Response> =
             });
 
     } catch (error) {
-        console.log("User creation Error", error);
+        console.error("User creation Error", error);
         return res.status(500).json({
             error: error instanceof Error ? error.message : "User not created",
             success: false
@@ -98,9 +94,6 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
 
         // Call service
         const result = await userService.loginUser({ email, password });
-
-        console.log("Token generated successfully:", !!result.token);
-        console.log("Login request received from:", req.headers.origin);
 
         // Set cookie and return response WITHOUT token in body
         return res
@@ -136,7 +129,7 @@ export const logout = async (req: Request, res: Response): Promise<Response> => 
                 success: true
             });
     } catch (error) {
-        console.log("Error", error);
+        console.error("Error", error);
         return res.status(500).json({
             error: "Logout error",
             success: false
@@ -155,7 +148,7 @@ export const getUser = async (req: Request, res: Response): Promise<Response> =>
             success: true
         });
     } catch (error) {
-        console.log("getUser error", error);
+        console.error("getUser error", error);
         return res.status(404).json({
             error: error instanceof Error ? error.message : "getUser error",
             success: false
@@ -202,7 +195,7 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response): Prom
             success: true
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(404).json({
             error: error instanceof Error ? error.message : "Profile not found",
             success: false
@@ -299,8 +292,6 @@ export const getFollowingUsers = async (req: AuthenticatedRequest, res: Response
 // Follow or unfollow user
 export const followOrUnfollow = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
-        console.log("Follow/unfollow endpoint hit");
-        console.log("User ID from middleware:", req.id);
 
         const userId = req.id;
         const { followId } = req.params;

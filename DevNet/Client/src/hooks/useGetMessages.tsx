@@ -17,18 +17,16 @@ const useGetMessages = () => {
 
         const fetchMessages = async () => {
             try {
-                console.log("Hook: Fetching messages for user:", chatUser._id);
                 const response = await axios.get(
                     `${API_BASE_URL}/api/message/get/${chatUser._id}`,
                     { withCredentials: true }
                 );
 
                 if (response.data.success) {
-                    console.log("Hook: Got messages:", response.data.messages);
                     dispatch(setMessages(response.data.messages));
                 }
             } catch (error) {
-                console.log("Getting Message Fetching Error", error);
+                console.error("Getting Message Fetching Error", error);
             }
         };
 

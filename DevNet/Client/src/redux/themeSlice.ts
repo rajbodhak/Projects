@@ -18,7 +18,7 @@ try {
         initialState.mode = 'dark';
     }
 } catch (error) {
-    console.log("Localstorage accessing Error", error);
+    console.error("Localstorage accessing Error", error);
 }
 
 export const themeSlice = createSlice({

@@ -21,20 +21,6 @@ class SocketService {
                 },
                 transports: ['websocket']
             });
-
-            this.socket.on('connect', () => {
-                console.log('Connected to socket server with ID:', this.socket?.id);
-            });
-
-            this.socket.on('disconnect', () => {
-                console.log('Disconnected from socket server');
-            });
-
-            // Listen for online users updates
-            this.socket.on('getOnlineUsers', (onlineUsers: string[]) => {
-                console.log('Online users:', onlineUsers);
-                // You might want to dispatch this to Redux if needed
-            });
         }
         return this.socket;
     }

@@ -21,9 +21,8 @@ io.on("connection", (socket) => {
         ? socket.handshake.query.id[0]
         : socket.handshake.query.id;
 
-    if (userId) {  // Ensuring userId is defined
+    if (userId) {
         userSocketMap[userId] = socket.id;
-        console.log(`User Connected, User Id: ${userId}, Socket Id: ${socket.id}`);
 
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
 

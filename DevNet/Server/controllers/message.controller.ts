@@ -12,8 +12,6 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
         const { receiverId } = req.params;
         const { textMessage: message } = req.body;
 
-        console.log("Message: ", message);
-
         // Validation
         if (!userId) {
             return res.status(401).json({
@@ -78,7 +76,6 @@ export const getMessages = async (req: AuthenticatedRequest, res: Response) => {
             });
         }
 
-        console.log("Getting messages between", userId, "and", receiverId);
 
         // Call service method
         const messages = await MessageService.getMessages({
@@ -86,7 +83,6 @@ export const getMessages = async (req: AuthenticatedRequest, res: Response) => {
             receiverId
         });
 
-        console.log("Found messages:", messages);
 
         return res.status(200).json({
             success: true,

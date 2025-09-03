@@ -32,7 +32,7 @@ const Notifications = () => {
                         break;
                     // Add more cases as needed
                     default:
-                        console.log('Unknown notification type');
+                        console.error('Unknown notification type');
                 }
             }
         } catch (error) {

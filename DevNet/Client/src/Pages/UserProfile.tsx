@@ -22,7 +22,6 @@ const UserProfile = () => {
     useGetProfileById(id!);
     // Get profile user data
     const userProfileData = useSelector((state: Rootstate) => state.auth.userProfile);
-    console.log("userProfileData: ", userProfileData);
 
     const isOwnProfile = currentUser?._id === id;
 
@@ -66,7 +65,7 @@ const UserProfile = () => {
                     setIsFollowing(response.data.isFollowing);
                 }
             } catch (error) {
-                console.log("Follow status check error:", error);
+                console.error("Follow status check error:", error);
             }
         };
 
@@ -93,7 +92,7 @@ const UserProfile = () => {
                 setIsFollowing(response.data.isFollowing);
             }
         } catch (error) {
-            console.log("Follow Client Error: ", error);
+            console.error("Follow Client Error: ", error);
         } finally {
             setIsLoading(false);
         }
