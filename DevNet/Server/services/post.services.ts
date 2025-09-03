@@ -1,10 +1,10 @@
 import sharp from "sharp";
-import cloudinary from "../utils/cloudinary.ts";
-import Post from "../models/post.model.ts";
-import User from "../models/user.model.ts";
-import Comment from "../models/comment.model.ts";
+import cloudinary from "../utils/cloudinary";
+import Post from "../models/post.model";
+import User from "../models/user.model";
+import Comment from "../models/comment.model";
 import mongoose from "mongoose";
-import { getRecieverSocketId, io } from "../socket/socket.ts";
+import { getRecieverSocketId, io } from "../socket/socket";
 
 // Types
 interface UploadedFile {

@@ -1,6 +1,6 @@
 import express from "express";
-import { sendMessage, getMessages } from "../controllers/message.controller.ts";
-import isAuthenticated from "../middlewares/isAuthenticated.ts";
+import { sendMessage, getMessages } from "../controllers/message.controller";
+import isAuthenticated from "../middlewares/isAuthenticated";
 
 const router = express.Router();
 

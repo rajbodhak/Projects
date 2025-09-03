@@ -5,12 +5,12 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import "../config/passport.ts"
-import connectDB from "../config/db.ts";
-import userRoutes from "../routers/user.router.ts";
-import postRoutes from "../routers/post.router.ts";
-import messageRoutes from "../routers/message.router.ts";
-import authRoutes from "../routers/auth.router.ts";
-import { app, server } from "../socket/socket.ts"
+import connectDB from "../config/db";
+import userRoutes from "../routers/user.router";
+import postRoutes from "../routers/post.router";
+import messageRoutes from "../routers/message.router";
+import authRoutes from "../routers/auth.router";
+import { app, server } from "../socket/socket"
 import passport from "passport";
 
 // Load environment variables first

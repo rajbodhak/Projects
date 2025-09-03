@@ -1,7 +1,7 @@
-import Conversation from "../models/conversation.model.ts";
-import Message from "../models/message.model.ts";
+import Conversation from "../models/conversation.model";
+import Message from "../models/message.model";
 import mongoose from "mongoose";
-import { getRecieverSocketId, io } from "../socket/socket.ts";
+import { getRecieverSocketId, io } from "../socket/socket";
 
 interface SendMessageParams {
     userId: string;

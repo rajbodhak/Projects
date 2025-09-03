@@ -1,8 +1,8 @@
-import User from "../models/user.model.ts";
+import User from "../models/user.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import cloudinary from "../utils/cloudinary.ts";
-import getDataUri from "../utils/datauri.ts";
+import cloudinary from "../utils/cloudinary";
+import getDataUri from "../utils/datauri";
 import { UploadApiResponse } from "cloudinary";
 import mongoose from "mongoose";
 

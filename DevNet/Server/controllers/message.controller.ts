@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { MessageService } from "../services/message.services.ts";
+import { MessageService } from "../services/message.services";
 
 interface AuthenticatedRequest extends Request {
     id?: string;

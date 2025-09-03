@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { userService } from "../services/user.services.ts";
+import { userService } from "../services/user.services";
 
 // Interface for authenticated requests
 interface AuthenticatedRequest extends Request {
