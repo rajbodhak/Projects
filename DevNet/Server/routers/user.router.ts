@@ -14,7 +14,7 @@ import {
     searchUsers
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
-import upload from "../utils/multer";
+import upload from "../utils/multer.js";
 
 const router = express.Router();
 
