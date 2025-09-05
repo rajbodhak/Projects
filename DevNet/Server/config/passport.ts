@@ -34,7 +34,9 @@ passport.use(new jwtStrategy({
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID!,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    callbackURL: "/api/auth/google/callback"
+    callbackURL: process.env.NODE_ENV === 'production'
+        ? "https://projects-production-7705.up.railway.app/api/auth/google/callback"
+        : "/api/auth/google/callback"
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         // Check if user already exists with this Google ID
@@ -101,7 +103,9 @@ passport.use(new GoogleStrategy({
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID!,
     clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    callbackURL: "/api/auth/github/callback",
+    callbackURL: process.env.NODE_ENV === 'production'
+        ? "https://projects-production-7705.up.railway.app/api/auth/github/callback"
+        : "/api/auth/github/callback",
     scope: ['user:email']
 }, async (accessToken: string, refreshToken: string, profile: any, done: (error: any, user?: any) => void) => {
     try {
@@ -110,7 +114,7 @@ passport.use(new GitHubStrategy({
             headers: {
                 Authorization: `token ${accessToken}`,
                 Accept: 'application/vnd.github.v3+json',
-                'User-Agent': 'Your-App-Name'
+                'User-Agent': 'DevNet-App'
             }
         });
 
@@ -189,6 +193,7 @@ passport.use(new GitHubStrategy({
         return done(error as Error);
     }
 }));
+
 // Serialize user for session
 passport.serializeUser((user: any, done) => {
     done(null, user._id);
