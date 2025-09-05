@@ -14,8 +14,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'https://devnet-backend-d762.onrender.com',
         changeOrigin: true,
+        secure: false,
       },
     },
   },

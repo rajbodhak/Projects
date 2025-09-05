@@ -16,7 +16,7 @@ interface OAuthButtonsProps {
 }
 
 const OAuthButtons: React.FC<OAuthButtonsProps> = ({ isLoading = false, className = "" }) => {
-    const API_BASE_URL = 'http://localhost:8000';
+    const API_BASE_URL = "https://devnet-backend-d762.onrender.com";
 
     const handleGoogleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
