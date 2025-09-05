@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { API_BASE_URL } from "@/lib/apiConfig";
+
 class SocketService {
     private static instance: SocketService;
     private socket: Socket | null = null;
@@ -19,7 +20,41 @@ class SocketService {
                 query: {
                     id: userId
                 },
-                transports: ['websocket']
+                transports: ['websocket', 'polling'], // Add polling as fallback
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionAttempts: 5,
+                timeout: 20000,
+                forceNew: false
+            });
+
+            // Handle connection events
+            this.socket.on('connect', () => {
+                console.log('Connected to server:', this.socket?.id);
+            });
+
+            this.socket.on('disconnect', (reason) => {
+                console.log('Disconnected from server:', reason);
+                if (reason === 'io server disconnect') {
+                    // Server disconnected, reconnect manually
+                    this.socket?.connect();
+                }
+            });
+
+            this.socket.on('reconnect', (attemptNumber) => {
+                console.log('Reconnected to server on attempt:', attemptNumber);
+            });
+
+            this.socket.on('reconnect_attempt', (attemptNumber) => {
+                console.log('Attempting to reconnect:', attemptNumber);
+            });
+
+            this.socket.on('reconnect_error', (error) => {
+                console.log('Reconnection error:', error);
+            });
+
+            this.socket.on('reconnect_failed', () => {
+                console.log('Failed to reconnect to server');
             });
         }
         return this.socket;
@@ -40,10 +75,17 @@ class SocketService {
         return this.socket ? this.socket.id : null;
     }
 
+    // Helper method to check if connected
+    isConnected() {
+        return this.socket ? this.socket.connected : false;
+    }
+
     // Helper method to emit events
     emit(event: string, data: any) {
-        if (this.socket) {
+        if (this.socket && this.socket.connected) {
             this.socket.emit(event, data);
+        } else {
+            console.warn('Socket not connected. Cannot emit event:', event);
         }
     }
 

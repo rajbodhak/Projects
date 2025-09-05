@@ -1,1 +1,1 @@
-export const API_BASE_URL = "https://devnet-backend-d762.onrender.com";
+export const API_BASE_URL = "https://projects-production-7705.up.railway.app";

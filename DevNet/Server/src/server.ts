@@ -25,7 +25,7 @@ app.use(urlencoded({ extended: true, limit: '10mb' }));
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production'
         ? [
-            process.env.CLIENT_URL || 'https://your-frontend-domain.com', // Provide fallback
+            process.env.CLIENT_URL || 'https://devnet-client.vercel.app',
             /https:\/\/.*\.railway\.app$/,
             /https:\/\/.*\.vercel\.app$/,
         ]
