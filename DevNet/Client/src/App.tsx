@@ -4,6 +4,7 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import MainLayout from './components/MainLayout';
 import Home from './Pages/Home';
+import { useLocation } from 'react-router-dom';
 import {
   Bookmarks,
   Messages,
@@ -31,14 +32,20 @@ const createProtectedRoute = (element: React.ReactNode) => (
 // Component to redirect authenticated users away from auth pages
 const RedirectIfAuthenticated = ({ children }: { children: React.ReactNode }) => {
   const { user } = useSelector((state: Rootstate) => state.auth);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
 
-  if (user) {
+  // Check if this is an OAuth callback
+  const isOAuthCallback = searchParams.get('auth') === 'success';
+
+  // If user exists and it's NOT an OAuth callback, redirect to home
+  if (user && !isOAuthCallback) {
     return <Navigate to="/home" replace />;
   }
 
+  // Allow access for OAuth callbacks or when user is not authenticated
   return <>{children}</>;
 };
-
 const browserRouter = createBrowserRouter([
   // Public routes - redirect to home if already authenticated
   {
