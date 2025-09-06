@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { userService } from "../services/user.services.js";
+import jwt from 'jsonwebtoken';
 
 // Interface for authenticated requests
 interface AuthenticatedRequest extends Request {
@@ -18,21 +19,26 @@ const getCookieOptions = () => ({
 // Validate token endpoint
 export const validateToken = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
-
         console.log('=== TOKEN VALIDATION DEBUG ===');
         console.log('Cookies:', req.cookies);
         console.log('Token present:', !!req.cookies.token);
-        console.log('User-Agent:', req.headers['user-agent']);
+        console.log('req.id present:', !!req.id);
         console.log('===============================');
-        if (!req.id) {
+
+        // Handle token directly (like getCurrentUser does)
+        const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+
+        if (!token) {
             return res.status(401).json({
                 valid: false,
-                error: "Invalid token",
+                error: "No token provided",
                 success: false
             });
         }
 
-        const user = await userService.validateUserToken(req.id);
+        // Verify the token directly
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+        const user = await userService.validateUserToken(decoded.userId);
 
         return res.status(200).json({
             valid: true,
@@ -42,9 +48,9 @@ export const validateToken = async (req: AuthenticatedRequest, res: Response): P
 
     } catch (error) {
         console.error("Token validation error:", error);
-        return res.status(500).json({
+        return res.status(401).json({ // Changed from 500 to 401
             valid: false,
-            error: error instanceof Error ? error.message : "Token validation failed",
+            error: "Invalid token",
             success: false
         });
     }
