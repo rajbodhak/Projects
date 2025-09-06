@@ -18,6 +18,12 @@ const getCookieOptions = () => ({
 // Validate token endpoint
 export const validateToken = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
     try {
+
+        console.log('=== TOKEN VALIDATION DEBUG ===');
+        console.log('Cookies:', req.cookies);
+        console.log('Token present:', !!req.cookies.token);
+        console.log('User-Agent:', req.headers['user-agent']);
+        console.log('===============================');
         if (!req.id) {
             return res.status(401).json({
                 valid: false,
