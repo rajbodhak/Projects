@@ -11,13 +11,4 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://devnet-backend-ru43.onrender.com',
-        changeOrigin: true,
-        secure: false,
-      },
-    },
-  },
 })
