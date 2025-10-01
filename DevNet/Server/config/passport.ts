@@ -35,7 +35,7 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID!,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     callbackURL: process.env.NODE_ENV === 'production'
-        ? "https://projects-production-7705.up.railway.app/api/auth/google/callback"
+        ? "https://devnet-backend-ru43.onrender.com/api/auth/google/callback"
         : "/api/auth/google/callback"
 }, async (accessToken, refreshToken, profile, done) => {
     try {
@@ -104,7 +104,7 @@ passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID!,
     clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     callbackURL: process.env.NODE_ENV === 'production'
-        ? "https://projects-production-7705.up.railway.app/api/auth/github/callback"
+        ? "https://devnet-backend-ru43.onrender.com/api/auth/github/callback"
         : "/api/auth/github/callback",
     scope: ['user:email']
 }, async (accessToken: string, refreshToken: string, profile: any, done: (error: any, user?: any) => void) => {

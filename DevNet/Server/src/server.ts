@@ -65,7 +65,7 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-    res.send("Hello this is DevNet backend running on Railway! 🚀");
+    res.send("Hello this is DevNet backend running on Render! 🚀");
 });
 
 //User Routes
@@ -87,7 +87,7 @@ const PORT = parseInt(process.env.PORT || "8000", 10);
 // Connect to database first, then start server
 connectDB()
     .then(() => {
-        server.listen(PORT, '0.0.0.0', () => { // Railway needs 0.0.0.0
+        server.listen(PORT, '0.0.0.0', () => {
             console.log(`🚀 Server is running on port ${PORT}`);
             console.log(`Environment: ${process.env.NODE_ENV}`);
             console.log(`Health check available at /health`);

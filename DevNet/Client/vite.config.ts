@@ -14,7 +14,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://projects-production-7705.up.railway.app',
+        target: 'https://devnet-backend-ru43.onrender.com',
         changeOrigin: true,
         secure: false,
       },
