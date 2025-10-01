@@ -13,7 +13,6 @@ import authRoutes from "../routers/auth.router.js";
 import { app, server } from "../socket/socket.js"
 import passport from "passport";
 
-// Load environment variables first
 dotenv.config();
 
 // Middleware
@@ -26,7 +25,7 @@ const corsOptions = {
     origin: process.env.NODE_ENV === 'production'
         ? [
             process.env.CLIENT_URL || 'https://devnet-client.vercel.app',
-            /https:\/\/.*\.railway\.app$/,
+            /https:\/\/.*\.onrender\.com$/,
             /https:\/\/.*\.vercel\.app$/,
         ]
         : ["http://localhost:5173", "http://localhost:3000"],
@@ -71,8 +70,8 @@ app.get("/", (req, res) => {
 
 //User Routes
 app.use("/api/users", userRoutes);
-app.use("/api/posts", postRoutes); // Removed trailing slash for consistency
-app.use("/api/message", messageRoutes); // Removed trailing slash
+app.use("/api/posts", postRoutes);
+app.use("/api/message", messageRoutes);
 app.use("/api/auth", authRoutes);
 
 // 404 handler

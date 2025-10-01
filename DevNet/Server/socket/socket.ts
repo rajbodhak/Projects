@@ -11,7 +11,7 @@ const io = new Server(server, {
         origin: process.env.NODE_ENV === 'production'
             ? [
                 process.env.CLIENT_URL || 'https://devnet-client.vercel.app',
-                /https:\/\/.*\.railway\.app$/,
+                /https:\/\/.*\.onrender\.com$/,
                 /https:\/\/.*\.vercel\.app$/,
             ]
             : ["http://localhost:5173", "http://localhost:3000"],
