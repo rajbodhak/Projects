@@ -20,11 +20,11 @@ class SocketService {
                 query: {
                     id: userId
                 },
-                transports: ['websocket', 'polling'], // Add polling as fallback
+                transports: ['polling'],
                 reconnection: true,
-                reconnectionDelay: 1000,
-                reconnectionAttempts: 5,
-                timeout: 20000,
+                reconnectionDelay: 2000,
+                reconnectionAttempts: 10,
+                timeout: 30000,
                 forceNew: false
             });
 
@@ -55,6 +55,10 @@ class SocketService {
 
             this.socket.on('reconnect_failed', () => {
                 console.log('Failed to reconnect to server');
+            });
+
+            this.socket.on('connect_error', (error) => {
+                console.log('Connection error:', error.message);
             });
         }
         return this.socket;
@@ -94,7 +98,7 @@ class SocketService {
         if (this.socket) {
             this.socket.on(event, callback);
         }
-        return this; // For method chaining
+        return this;
     }
 
     // Helper method to stop listening to events
@@ -102,7 +106,7 @@ class SocketService {
         if (this.socket) {
             this.socket.off(event, callback);
         }
-        return this; // For method chaining
+        return this;
     }
 }
 
