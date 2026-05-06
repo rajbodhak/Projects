@@ -19,7 +19,7 @@ const LeftSideBar = () => {
     const sideBarItems = [
         { icon: <Home size={20} />, itemName: "Home", path: "/home" },
         { icon: <Search size={20} />, itemName: "Search", path: "/search" },
-        { icon: <Bell size={20} />, itemName: "Notifications", path: "/notifications" },
+        // { icon: <Bell size={20} />, itemName: "Notifications", path: "/notifications" },
         { icon: <Mail size={20} />, itemName: "Messages", path: "/messages" },
         { icon: <Bookmark size={20} />, itemName: "Bookmarks", path: "/bookmarks" },
         { icon: <User size={20} />, itemName: "Profile", path: `/${user?._id}` },

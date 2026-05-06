@@ -7,9 +7,10 @@ import defaultPfp from "../assets/default-pfp.webp";
 
 interface SuggestedUserCardProps {
   userinfo: User;
+  onFollowed: (userId: string) => void;
 }
 
-const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
+const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo, onFollowed }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -43,6 +44,9 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ userinfo }) => {
       );
       if (response.data.success) {
         setIsFollowing(response.data.isFollowing);
+        if (response.data.isFollowing) {
+          onFollowed(userinfo._id);
+        }
       }
     } catch (error) {
       console.error("Follow Client Error: ", error);
