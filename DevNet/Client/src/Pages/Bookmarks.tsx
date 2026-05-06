@@ -64,9 +64,6 @@ const Bookmarks = () => {
                     <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base mb-2">
                         You haven't bookmarked any posts yet.
                     </p>
-                    <p className="text-gray-400 dark:text-gray-500 text-xs sm:text-sm">
-                        When you bookmark posts, they'll appear here.
-                    </p>
                 </div>
             )}
         </div>
