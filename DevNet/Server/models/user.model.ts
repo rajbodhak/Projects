@@ -7,7 +7,6 @@ export interface IUser extends Document {
     name?: string;
     profilePicture?: string;
     bio?: string;
-    github?: string;
     skills?: string[];
     followers: mongoose.Types.ObjectId[];
     following: mongoose.Types.ObjectId[];
@@ -18,6 +17,13 @@ export interface IUser extends Document {
     provider?: 'local' | 'google' | 'github';
     providerId?: string;
     isEmailVerified: boolean;
+
+    //Socials
+    github?: string;
+    leetcode?: string;
+    twitter?: string;
+    linkedin?: string;
+    website?: string;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -32,7 +38,6 @@ const UserSchema = new Schema<IUser>(
         name: { type: String, default: " " },
         profilePicture: { type: String },
         bio: { type: String },
-        github: { type: String },
         skills: { type: [String] },
         followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
         following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
@@ -40,7 +45,12 @@ const UserSchema = new Schema<IUser>(
         bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
         provider: { type: String, enum: ['local', 'google', 'github'], default: 'local' },
         providerId: { type: String, sparse: true },
-        isEmailVerified: { type: Boolean, default: false }
+        isEmailVerified: { type: Boolean, default: false },
+        github: { type: String },
+        leetcode: { type: String },
+        twitter: { type: String },
+        linkedin: { type: String },
+        website: { type: String }
     },
     { timestamps: true }
 );

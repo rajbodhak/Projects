@@ -32,7 +32,11 @@ interface UserLoginData {
 interface UserUpdateData {
     bio?: string;
     github?: string;
-    skills?: string | string[];  // Can be string or array
+    leetcode?: string;
+    twitter?: string;
+    linkedin?: string;
+    website?: string;
+    skills?: string | string[];
     name?: string;
 }
 

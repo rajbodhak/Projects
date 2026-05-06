@@ -25,7 +25,11 @@ export interface User {
     email: string;
     skills: string[];
     bio: string;
-    github: string;
+    github?: string;
+    leetcode?: string;
+    twitter?: string;
+    linkedin?: string;
+    website?: string;
     profilePicture?: string;
     followers: string[];
     following: string[];

@@ -216,38 +216,20 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response): Prom
 };
 
 // Edit user profile
-export const editUser = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
-    try {
-        const userId = req.id;
-        if (!userId) {
-            return res.status(401).json({
-                error: "User not authenticated",
-                success: false
-            });
-        }
+export const editUser = async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.id;
+    if (!userId) return res.status(401).json({ error: "Not authenticated", success: false });
 
-        const { bio, github, skills, name } = req.body;
-        const profilePicture = req.file;
+    const { bio, github, leetcode, twitter, linkedin, website, skills, name } = req.body;
+    const profilePicture = req.file;
 
-        const user = await userService.updateUser(
-            userId,
-            { bio, github, skills, name },
-            profilePicture
-        );
+    const user = await userService.updateUser(
+        userId,
+        { bio, github, leetcode, twitter, linkedin, website, skills, name },
+        profilePicture
+    );
 
-        return res.status(200).json({
-            message: "User updated successfully",
-            success: true,
-            user
-        });
-
-    } catch (error) {
-        console.error("Edit User error:", error);
-        return res.status(500).json({
-            error: error instanceof Error ? error.message : "Edit user error",
-            success: false
-        });
-    }
+    return res.status(200).json({ message: "Updated", success: true, user });
 };
 
 // Get suggested users
