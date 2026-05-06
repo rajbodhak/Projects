@@ -95,7 +95,7 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
         }
 
         try {
-            const response = await axios.post(`/api/posts/bookmark/${postData._id}`, {}, { withCredentials: true });
+            const response = await axios.post(`${API_BASE_URL}/api/posts/bookmark/${postData._id}`, {}, { withCredentials: true });
 
             if (response.data.success) {
                 const newBookmarkedState = !bookmarked;
@@ -125,7 +125,13 @@ const PostCard = ({ post, onDelete, onPostUpdate }: PostCardProps) => {
 
                 // Update Redux state with the new user data
                 dispatch(setAuthUser(updatedUser));
-                toast.success(response.data.message)
+                toast.success(response.data.message);
+
+                if (onPostUpdate && postData) {
+                    onPostUpdate(postData._id, {
+                        ...postData,
+                    });
+                }
             }
         } catch (error) {
             console.error("Bookmark toggling error", error);

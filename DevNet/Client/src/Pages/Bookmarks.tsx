@@ -4,10 +4,14 @@ import { Post } from '@/lib/types';
 import PostCard from '@/components/PostCard';
 import { API_BASE_URL } from '@/lib/apiConfig';
 import { Loader2 } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { Rootstate } from '@/redux/store';
+
 
 const Bookmarks = () => {
     const [bookmarkedPosts, setBookmarkedPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const { user } = useSelector((state: Rootstate) => state.auth);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,9 +31,15 @@ const Bookmarks = () => {
     }, []);
 
     const handlePostUpdate = (postId: string, updatedPost: Post) => {
-        setBookmarkedPosts((prevPosts) =>
-            prevPosts.map((post) => (post._id === postId ? updatedPost : post))
-        );
+        // If user unbookmarks from this page, remove the card entirely
+        const isStillBookmarked = user?.bookmarks?.includes(postId);
+        if (!isStillBookmarked) {
+            setBookmarkedPosts(prev => prev.filter(p => p._id !== postId));
+        } else {
+            setBookmarkedPosts(prev =>
+                prev.map(post => post._id === postId ? updatedPost : post)
+            );
+        }
     };
 
     const handlePostDelete = (postId: string) => {
