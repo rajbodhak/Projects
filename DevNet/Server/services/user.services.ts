@@ -55,13 +55,17 @@ export class UserService {
     // Format user data for response (remove sensitive info)
     private formatUserData(user: any) {
         return {
-            _id: user.id,  // Using id instead of _id
+            _id: user.id,
             username: user.username,
             email: user.email,
             name: user.name,
             profilePicture: user.profilePicture,
             bio: user.bio,
             github: user.github,
+            leetcode: user.leetcode,
+            twitter: user.twitter,
+            linkedin: user.linkedin,
+            website: user.website,
             skills: user.skills,
             bookmarks: user.bookmarks,
             posts: user.posts,
@@ -69,7 +73,6 @@ export class UserService {
             following: user.following
         };
     }
-
     // Validate user token and get user data
     async validateUserToken(userId: string) {
         const user = await User.findById(userId).select("-password");
@@ -199,7 +202,7 @@ export class UserService {
 
     // Update user profile
     async updateUser(userId: string, updateData: UserUpdateData, profilePicture?: UploadedFile) {
-        const { bio, github, skills, name } = updateData;
+        const { bio, github, skills, name, leetcode, twitter, linkedin, website } = updateData;
         let cloudResponse: UploadApiResponse | undefined;
 
         // Handle profile picture upload
@@ -221,6 +224,10 @@ export class UserService {
         if (name) user.name = name;
         if (bio) user.bio = bio;
         if (github) user.github = github;
+        if (leetcode !== undefined) user.leetcode = leetcode;
+        if (twitter !== undefined) user.twitter = twitter;
+        if (linkedin !== undefined) user.linkedin = linkedin;
+        if (website !== undefined) user.website = website;
         if (skills) user.skills = Array.isArray(skills) ? skills : [skills];
         if (cloudResponse) user.profilePicture = cloudResponse.secure_url;
 

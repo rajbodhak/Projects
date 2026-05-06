@@ -17,10 +17,10 @@ const ProfileEdit = ({ userinfo, onUpdate, onCancel }: ProfileDetailsProps) => {
     const [bio, setBio] = useState(userinfo.bio || "");
     const [skills, setSkills] = useState(userinfo.skills?.join(", ") || "");
     const [github, setGithub] = useState(userinfo.github || "");
-    const [leetcode, setLeetcode] = useState(userinfo.leetcode || "");       // ← new
-    const [twitter, setTwitter] = useState(userinfo.twitter || "");           // ← new
-    const [linkedin, setLinkedin] = useState(userinfo.linkedin || "");        // ← new
-    const [website, setWebsite] = useState(userinfo.website || "");           // ← new
+    const [leetcode, setLeetcode] = useState(userinfo.leetcode || "");
+    const [twitter, setTwitter] = useState(userinfo.twitter || "");
+    const [linkedin, setLinkedin] = useState(userinfo.linkedin || "");
+    const [website, setWebsite] = useState(userinfo.website || "");
     const [profilePicture, setProfilePicture] = useState(userinfo.profilePicture || "");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
