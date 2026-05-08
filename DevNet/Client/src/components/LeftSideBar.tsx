@@ -1,4 +1,4 @@
-import { Home, Search, Bell, Mail, Bookmark, User, Sun, Moon, LogOut } from "lucide-react";
+import { Home, Search, Mail, Bookmark, User, Sun, Moon, LogOut } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Rootstate } from "@/redux/store";
